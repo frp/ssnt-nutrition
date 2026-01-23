@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { useState } from "react";
 import "./App.css";
 import {
   QueryClient,
@@ -21,59 +22,121 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL ?? "api";
+
 const queryClient = new QueryClient();
 
-function Nutrient({
-  date,
+const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];
+
+type NutrientProps = {
+  name: string;
+  count: number;
+  goal?: number;
+  onIncrease: () => void;
+  onDecrease: () => void;
+};
+
+function DotCountInput({
   count,
   name,
-}: {
-  count: number;
-  name: string;
-  date: string;
-}) {
+  onIncrease,
+  onDecrease,
+  goal,
+}: NutrientProps) {
+  return (
+    <p>
+      <button onClick={onDecrease}>-</button>
+      {name}:{" "}
+      {new Array(count).fill(count).map((_, i) => (
+        <span
+          className={`dot filled ${name} ${goal && i >= goal ? "excess" : ""}`}
+          key={i}
+        ></span>
+      ))}
+      {goal && count < goal
+        ? new Array(goal - count)
+            .fill(goal - count)
+            .map((_, i) => (
+              <span className={`dot ${name}`} key={count + i}></span>
+            ))
+        : []}
+      <button onClick={onIncrease}>+</button>
+    </p>
+  );
+}
+
+function Portions() {
+  const date = new Date().toISOString().split("T")[0];
   const queryClient = useQueryClient();
+
+  const portionsQuery = useQuery({
+    queryKey: ["portions"],
+    queryFn: () =>
+      fetch(`${baseUrl}/days/${date}/portions`).then((res) => res.json()),
+  });
+
+  const goalsQuery = useQuery({
+    queryKey: ["goals"],
+    queryFn: () => fetch(`${baseUrl}/goals`).then((res) => res.json()),
+  });
 
   const mutation = useMutation({
     mutationFn: ({
       date,
       name,
-      direction,
+      command,
     }: {
       date: string;
       name: string;
-      direction: string;
+      command: string;
     }) =>
-      fetch(`http://localhost:3000/nutrients/${date}/${name}/${direction}`, {
+      fetch(`${baseUrl}/days/${date}/portions/${name}/${command}`, {
         method: "POST",
       }),
     onSuccess: () => queryClient.invalidateQueries(),
   });
 
-  return (
-    <p>
-      <button onClick={() => mutation.mutate({ date, name, direction: "dec" })}>
-        -
-      </button>
-      {name}: {count}{" "}
-      <button onClick={() => mutation.mutate({ date, name, direction: "inc" })}>
-        +
-      </button>
-    </p>
-  );
+  if (portionsQuery.isPending || goalsQuery.isPending) {
+    return <>Pending...</>;
+  }
+
+  if (portionsQuery.isError || goalsQuery.isError) {
+    return <>Error!</>;
+  }
+
+  if (portionsQuery.data) {
+    return NUTRIENTS.map((n) => (
+      <DotCountInput
+        name={n}
+        count={portionsQuery.data[n] ?? 0}
+        goal={goalsQuery.data[n] ?? 0}
+        onIncrease={() =>
+          mutation.mutate({ date, name: n, command: "consume" })
+        }
+        onDecrease={() =>
+          mutation.mutate({ date, name: n, command: "unconsume" })
+        }
+      />
+    ));
+  }
+
+  return <></>;
 }
 
-function Nutrients() {
-  const date = new Date().toISOString().split("T")[0];
-
-  const nutrients = ["protein", "carbs", "vegetables", "fats"];
+function Goals() {
+  const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["nutrients"],
-    queryFn: () =>
-      fetch(`http://localhost:3000/nutrients/${date}`).then((res) =>
-        res.json(),
-      ),
+    queryKey: ["goals"],
+    queryFn: () => fetch(`${baseUrl}/goals`).then((res) => res.json()),
+  });
+
+  const mutation = useMutation({
+    mutationFn: ({ name, command }: { name: string; command: string }) =>
+      fetch(`${baseUrl}/goals/portions/${name}/${command}`, {
+        method: "POST",
+      }),
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 
   if (query.isPending) {
@@ -85,8 +148,13 @@ function Nutrients() {
   }
 
   if (query.data) {
-    return nutrients.map((n) => (
-      <Nutrient date={date} name={n} count={query.data[n] ?? 0} />
+    return NUTRIENTS.map((n) => (
+      <DotCountInput
+        name={n}
+        count={query.data[n] ?? 0}
+        onIncrease={() => mutation.mutate({ name: n, command: "inc" })}
+        onDecrease={() => mutation.mutate({ name: n, command: "dec" })}
+      />
     ));
   }
 
@@ -94,10 +162,22 @@ function Nutrients() {
 }
 
 function App() {
+  const [settingGoals, setSettingGoals] = useState(false);
+
+  const content = settingGoals ? (
+    <>
+      <button onClick={() => setSettingGoals(false)}>Record Portions</button>
+      <Goals />
+    </>
+  ) : (
+    <>
+      <button onClick={() => setSettingGoals(true)}>Set Goals</button>
+      <Portions />
+    </>
+  );
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <Nutrients />
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{content}</QueryClientProvider>
   );
 }
 
