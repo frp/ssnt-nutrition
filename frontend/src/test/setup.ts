@@ -12,20 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import "./App.css";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import AppContent from "./components/AppContent";
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
-
-const queryClient = new QueryClient();
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}><AppContent /></QueryClientProvider>
-  );
-}
-
-export default App;
+// It is in setup because it has to go before all the imports.
+vi.stubEnv('VITE_BACKEND_BASE_URL', 'http://test-api');
