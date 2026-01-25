@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AppContent from '../components/AppContent';
+import {
+  describe,
+  it,
+  expect,
+  mock,
+  beforeEach,
+  afterEach,
+  setSystemTime,
+} from "bun:test";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AppContent from "../components/AppContent";
+import { BackendBaseUrl } from "@/BackendUrlContext";
 
 const createTestQueryClient = () =>
   new QueryClient({
@@ -34,22 +43,21 @@ const createTestQueryClient = () =>
 const renderWithClient = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient();
   return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <BackendBaseUrl.Provider value="http://test-api">
+        {ui}
+      </BackendBaseUrl.Provider>
+    </QueryClientProvider>,
   );
 };
 
-describe('AppContent', () => {
+describe("AppContent", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.useFakeTimers({shouldAdvanceTime: true});
-    vi.setSystemTime(new Date('2024-01-15T12:00:00Z'));
+    mock.clearAllMocks();
+    setSystemTime(new Date("2024-01-15T12:00:00Z"));
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  describe('AppContent component', () => {
+  describe("AppContent component", () => {
     const mockData = {
       protein: 3,
       carbs: 2,
@@ -58,33 +66,39 @@ describe('AppContent', () => {
     };
 
     beforeEach(() => {
-      globalThis.fetch = vi.fn() as typeof fetch;
-      vi.mocked(globalThis.fetch).mockImplementation(() =>
+      const mockFetch = mock(() =>
         Promise.resolve({
           json: () => Promise.resolve(mockData),
-        } as Response)
+        } as Response),
       );
+      globalThis.fetch = mockFetch as unknown as typeof fetch;
     });
 
     afterEach(() => {
-      vi.restoreAllMocks();
+      mock.restore();
     });
 
-    it('toggles between Portions and Goals view', async () => {
+    it("toggles between Portions and Goals view", async () => {
       const user = userEvent.setup();
       renderWithClient(<AppContent />);
-      
-      expect(screen.getByRole('button', { name: 'Set Goals' })).toBeInTheDocument();
 
-      await user.click(screen.getByRole('button', { name: 'Set Goals' }));
-      expect(screen.getByRole('button', { name: 'Record Portions' })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Set Goals" }),
+      ).toBeInTheDocument();
 
-      await user.click(screen.getByRole('button', { name: 'Record Portions' }));
-      expect(screen.getByRole('button', { name: 'Set Goals' })).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      expect(
+        screen.getByRole("button", { name: "Record Portions" }),
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "Record Portions" }));
+      expect(
+        screen.getByRole("button", { name: "Set Goals" }),
+      ).toBeInTheDocument();
     });
   });
 
-  describe('Portions component', () => {
+  describe("Portions component", () => {
     const mockPortionsData = {
       protein: 3,
       carbs: 2,
@@ -99,26 +113,26 @@ describe('AppContent', () => {
       fats: 4,
     };
 
+    const mockFetch = mock();
+
     beforeEach(() => {
-      vi.restoreAllMocks();
-      vi.clearAllMocks();
-      globalThis.fetch = vi.fn() as typeof fetch;
+      globalThis.fetch = mockFetch as unknown as typeof fetch;
     });
 
     afterEach(() => {
-      vi.restoreAllMocks();
+      mock.restore();
     });
 
-    it('shows loading state while fetching data', () => {
-      vi.mocked(globalThis.fetch).mockImplementation(() => new Promise(() => {}));
+    it("shows loading state while fetching data", () => {
+      mockFetch.mockImplementation(() => new Promise(() => {}));
       renderWithClient(<AppContent />);
-      expect(screen.getByText('Pending...')).toBeInTheDocument();
+      expect(screen.getByText("Pending...")).toBeInTheDocument();
     });
 
-    it('shows error state when portions fetch fails', async () => {
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
-        if (typeof url === 'string' && url.includes('/portions')) {
-          return Promise.reject(new Error('Network error'));
+    it("shows error state when portions fetch fails", async () => {
+      mockFetch.mockImplementation((url) => {
+        if (typeof url === "string" && url.includes("/portions")) {
+          return Promise.reject(new Error("Network error"));
         }
         return Promise.resolve({
           json: () => Promise.resolve(mockGoalsData),
@@ -128,14 +142,14 @@ describe('AppContent', () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText('Error!')).toBeInTheDocument();
+        expect(screen.getByText("Error!")).toBeInTheDocument();
       });
     });
 
-    it('shows error state when goals fetch fails', async () => {
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
-        if (typeof url === 'string' && url.includes('/goals')) {
-          return Promise.reject(new Error('Network error'));
+    it("shows error state when goals fetch fails", async () => {
+      mockFetch.mockImplementation((url) => {
+        if (typeof url === "string" && url.includes("/goals")) {
+          return Promise.reject(new Error("Network error"));
         }
         return Promise.resolve({
           json: () => Promise.resolve(mockPortionsData),
@@ -145,16 +159,18 @@ describe('AppContent', () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText('Error!')).toBeInTheDocument();
+        expect(screen.getByText("Error!")).toBeInTheDocument();
       });
     });
 
-    it('fetches data with correct date in URL', async () => {
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
+    it("fetches data with correct date in URL", async () => {
+      mockFetch.mockImplementation((url) => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions') ? mockPortionsData : mockGoalsData
+              typeof url === "string" && url.includes("/portions")
+                ? mockPortionsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -163,17 +179,19 @@ describe('AppContent', () => {
 
       await waitFor(() => {
         expect(globalThis.fetch).toHaveBeenCalledWith(
-          'http://test-api/days/2024-01-15/portions'
+          "http://test-api/days/2024-01-15/portions",
         );
       });
     });
 
-    it('renders DotCountInput components with correct count and goal data', async () => {
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
+    it("renders DotCountInput components with correct count and goal data", async () => {
+      mockFetch.mockImplementation((url) => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions') ? mockPortionsData : mockGoalsData
+              typeof url === "string" && url.includes("/portions")
+                ? mockPortionsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -184,27 +202,35 @@ describe('AppContent', () => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const proteinSection = screen.getByText(/protein:/i).closest('p');
-      const proteinFilledDots = proteinSection?.querySelectorAll('.dot.filled:not(.excess)');
-      const proteinEmptyDots = proteinSection?.querySelectorAll('.dot:not(.filled)');
+      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinFilledDots = proteinSection?.querySelectorAll(
+        ".dot.filled:not(.excess)",
+      );
+      const proteinEmptyDots =
+        proteinSection?.querySelectorAll(".dot:not(.filled)");
       expect(proteinFilledDots).toHaveLength(3);
       expect(proteinEmptyDots).toHaveLength(2);
 
-      const carbsSection = screen.getByText(/carbs:/i).closest('p');
-      const carbsFilledDots = carbsSection?.querySelectorAll('.dot.filled:not(.excess)');
-      const carbsEmptyDots = carbsSection?.querySelectorAll('.dot:not(.filled)');
+      const carbsSection = screen.getByText(/carbs:/i).closest("p");
+      const carbsFilledDots = carbsSection?.querySelectorAll(
+        ".dot.filled:not(.excess)",
+      );
+      const carbsEmptyDots =
+        carbsSection?.querySelectorAll(".dot:not(.filled)");
       expect(carbsFilledDots).toHaveLength(2);
       expect(carbsEmptyDots).toHaveLength(4);
     });
 
-    it('handles missing portion data with default values', async () => {
+    it("handles missing portion data with default values", async () => {
       const partialPortionsData = { protein: 3 };
 
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
+      mockFetch.mockImplementation((url) => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions') ? partialPortionsData : mockGoalsData
+              typeof url === "string" && url.includes("/portions")
+                ? partialPortionsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -215,18 +241,20 @@ describe('AppContent', () => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const carbsSection = screen.getByText(/carbs:/i).closest('p');
-      const carbsFilledDots = carbsSection?.querySelectorAll('.dot.filled');
+      const carbsSection = screen.getByText(/carbs:/i).closest("p");
+      const carbsFilledDots = carbsSection?.querySelectorAll(".dot.filled");
       expect(carbsFilledDots).toHaveLength(0);
     });
 
-    it('calls consume API when increase button is clicked', async () => {
+    it("calls consume API when increase button is clicked", async () => {
       const user = userEvent.setup();
-      vi.mocked(globalThis.fetch).mockImplementation((url) => {
+      mockFetch.mockImplementation((url) => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions') ? mockPortionsData : mockGoalsData
+              typeof url === "string" && url.includes("/portions")
+                ? mockPortionsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -237,23 +265,27 @@ describe('AppContent', () => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const increaseButtons = screen.getAllByRole('button', { name: '+' });
+      const increaseButtons = screen.getAllByRole("button", { name: "+" });
       await user.click(increaseButtons[0]);
 
       await waitFor(() => {
         expect(globalThis.fetch).toHaveBeenCalledWith(
-          'http://test-api/days/2024-01-15/portions/protein/consume',
-          { method: 'POST' }
+          "http://test-api/days/2024-01-15/portions/protein/consume",
+          { method: "POST" },
         );
       });
     });
 
-    it('updates UI with fresh data after increasing portion', async () => {
+    it("updates UI with fresh data after increasing portion", async () => {
       const user = userEvent.setup();
       let proteinCount = 3;
 
-      vi.mocked(globalThis.fetch).mockImplementation((url, options?) => {
-        if (options?.method === 'POST' && typeof url === 'string' && url.includes('/consume')) {
+      mockFetch.mockImplementation((url, options?) => {
+        if (
+          options?.method === "POST" &&
+          typeof url === "string" &&
+          url.includes("/consume")
+        ) {
           proteinCount++;
           return Promise.resolve({ ok: true } as Response);
         }
@@ -261,9 +293,9 @@ describe('AppContent', () => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions')
+              typeof url === "string" && url.includes("/portions")
                 ? { ...mockPortionsData, protein: proteinCount }
-                : mockGoalsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -274,26 +306,34 @@ describe('AppContent', () => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      let proteinSection = screen.getByText(/protein:/i).closest('p');
-      let filledDots = proteinSection?.querySelectorAll('.dot.filled:not(.excess)');
+      let proteinSection = screen.getByText(/protein:/i).closest("p");
+      let filledDots = proteinSection?.querySelectorAll(
+        ".dot.filled:not(.excess)",
+      );
       expect(filledDots).toHaveLength(3);
 
-      const increaseButtons = screen.getAllByRole('button', { name: '+' });
+      const increaseButtons = screen.getAllByRole("button", { name: "+" });
       await user.click(increaseButtons[0]);
 
       await waitFor(() => {
-        proteinSection = screen.getByText(/protein:/i).closest('p');
-        filledDots = proteinSection?.querySelectorAll('.dot.filled:not(.excess)');
+        proteinSection = screen.getByText(/protein:/i).closest("p");
+        filledDots = proteinSection?.querySelectorAll(
+          ".dot.filled:not(.excess)",
+        );
         expect(filledDots).toHaveLength(4);
       });
     });
 
-    it('updates UI with fresh data after decreasing portion', async () => {
+    it("updates UI with fresh data after decreasing portion", async () => {
       const user = userEvent.setup();
       let proteinCount = 3;
 
-      vi.mocked(globalThis.fetch).mockImplementation((url, options?) => {
-        if (options?.method === 'POST' && typeof url === 'string' && url.includes('/unconsume')) {
+      mockFetch.mockImplementation((url, options?) => {
+        if (
+          options?.method === "POST" &&
+          typeof url === "string" &&
+          url.includes("/unconsume")
+        ) {
           proteinCount--;
           return Promise.resolve({ ok: true } as Response);
         }
@@ -301,9 +341,9 @@ describe('AppContent', () => {
         return Promise.resolve({
           json: () =>
             Promise.resolve(
-              typeof url === 'string' && url.includes('/portions')
+              typeof url === "string" && url.includes("/portions")
                 ? { ...mockPortionsData, protein: proteinCount }
-                : mockGoalsData
+                : mockGoalsData,
             ),
         } as Response);
       });
@@ -314,18 +354,20 @@ describe('AppContent', () => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const decreaseButtons = screen.getAllByRole('button', { name: '-' });
+      const decreaseButtons = screen.getAllByRole("button", { name: "-" });
       await user.click(decreaseButtons[0]);
 
       await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest('p');
-        const filledDots = proteinSection?.querySelectorAll('.dot.filled:not(.excess)');
+        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const filledDots = proteinSection?.querySelectorAll(
+          ".dot.filled:not(.excess)",
+        );
         expect(filledDots).toHaveLength(2);
       });
     });
   });
 
-  describe('Goals component', () => {
+  describe("Goals component", () => {
     const mockGoalsData = {
       protein: 5,
       carbs: 6,
@@ -333,74 +375,79 @@ describe('AppContent', () => {
       fats: 4,
     };
 
+    const mockFetch = mock();
+
     beforeEach(() => {
-      vi.restoreAllMocks();
-      vi.clearAllMocks();
-      globalThis.fetch = vi.fn() as typeof fetch;
+      globalThis.fetch = mockFetch as unknown as typeof fetch;
     });
 
     afterEach(() => {
-      vi.restoreAllMocks();
+      mock.restore();
     });
 
-    it('shows loading state while fetching goals', async () => {
+    it("shows loading state while fetching goals", async () => {
       const user = userEvent.setup();
-      vi.mocked(globalThis.fetch).mockImplementation(() => new Promise(() => {}));
+      mockFetch.mockImplementation(() => new Promise(() => {}));
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole('button', { name: 'Set Goals' }));
+      await user.click(screen.getByRole("button", { name: "Set Goals" }));
 
-      expect(screen.getByText('Pending...')).toBeInTheDocument();
+      expect(screen.getByText("Pending...")).toBeInTheDocument();
     });
 
-    it('renders DotCountInput components with correct goal counts', async () => {
+    it("renders DotCountInput components with correct goal counts", async () => {
       const user = userEvent.setup();
-      vi.mocked(globalThis.fetch).mockImplementation(() =>
+      mockFetch.mockImplementation(() =>
         Promise.resolve({
           json: () => Promise.resolve(mockGoalsData),
-        } as Response)
+        } as Response),
       );
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole('button', { name: 'Set Goals' }));
+      await user.click(screen.getByRole("button", { name: "Set Goals" }));
 
       await waitFor(() => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const proteinSection = screen.getByText(/protein:/i).closest('p');
-      const proteinFilledDots = proteinSection?.querySelectorAll('.dot.filled');
+      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinFilledDots = proteinSection?.querySelectorAll(".dot.filled");
       expect(proteinFilledDots).toHaveLength(5);
     });
 
-    it('updates UI with fresh data after increasing goal', async () => {
+    it("updates UI with fresh data after increasing goal", async () => {
       const user = userEvent.setup();
       let proteinGoal = 5;
 
-      vi.mocked(globalThis.fetch).mockImplementation((url, options?) => {
-        if (options?.method === 'POST' && typeof url === 'string' && url.includes('/inc')) {
+      mockFetch.mockImplementation((url, options?) => {
+        if (
+          options?.method === "POST" &&
+          typeof url === "string" &&
+          url.includes("/inc")
+        ) {
           proteinGoal++;
           return Promise.resolve({ ok: true } as Response);
         }
 
         return Promise.resolve({
-          json: () => Promise.resolve({ ...mockGoalsData, protein: proteinGoal }),
+          json: () =>
+            Promise.resolve({ ...mockGoalsData, protein: proteinGoal }),
         } as Response);
       });
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole('button', { name: 'Set Goals' }));
+      await user.click(screen.getByRole("button", { name: "Set Goals" }));
 
       await waitFor(() => {
         expect(screen.getByText(/protein:/i)).toBeInTheDocument();
       });
 
-      const increaseButtons = screen.getAllByRole('button', { name: '+' });
+      const increaseButtons = screen.getAllByRole("button", { name: "+" });
       await user.click(increaseButtons[0]);
 
       await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest('p');
-        const filledDots = proteinSection?.querySelectorAll('.dot.filled');
+        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const filledDots = proteinSection?.querySelectorAll(".dot.filled");
         expect(filledDots).toHaveLength(6);
       });
     });

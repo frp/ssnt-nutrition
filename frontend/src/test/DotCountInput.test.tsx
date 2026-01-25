@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, mock } from 'bun:test';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DotCountInput } from '../components/DotCountInput';
@@ -24,8 +24,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="protein"
           count={3}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -39,8 +39,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="protein"
           count={5}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -53,8 +53,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="carbs"
           count={2}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -66,14 +66,14 @@ describe('DotCountInput', () => {
   describe('Button interactions', () => {
     it('calls onIncrease when + button is clicked', async () => {
       const user = userEvent.setup();
-      const mockIncrease = vi.fn();
+      const mockIncrease = mock();
 
       render(
         <DotCountInput
           name="protein"
           count={3}
           onIncrease={mockIncrease}
-          onDecrease={vi.fn()}
+          onDecrease={() => {}}
         />
       );
 
@@ -83,13 +83,13 @@ describe('DotCountInput', () => {
 
     it('calls onDecrease when - button is clicked', async () => {
       const user = userEvent.setup();
-      const mockDecrease = vi.fn();
+      const mockDecrease = mock();
 
       render(
         <DotCountInput
           name="protein"
           count={3}
-          onIncrease={vi.fn()}
+          onIncrease={() => {}}
           onDecrease={mockDecrease}
         />
       );
@@ -100,14 +100,14 @@ describe('DotCountInput', () => {
 
     it('handles multiple button clicks', async () => {
       const user = userEvent.setup();
-      const mockIncrease = vi.fn();
+      const mockIncrease = mock();
 
       render(
         <DotCountInput
           name="protein"
           count={3}
           onIncrease={mockIncrease}
-          onDecrease={vi.fn()}
+          onDecrease={() => {}}
         />
       );
 
@@ -127,8 +127,8 @@ describe('DotCountInput', () => {
           name="protein"
           count={2}
           goal={5}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -145,8 +145,8 @@ describe('DotCountInput', () => {
           name="protein"
           count={5}
           goal={5}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -160,8 +160,8 @@ describe('DotCountInput', () => {
           name="protein"
           count={7}
           goal={5}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -177,8 +177,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="protein"
           count={3}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -193,8 +193,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="protein"
           count={0}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -208,8 +208,8 @@ describe('DotCountInput', () => {
           name="protein"
           count={3}
           goal={0}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 
@@ -222,8 +222,8 @@ describe('DotCountInput', () => {
         <DotCountInput
           name="protein"
           count={50}
-          onIncrease={vi.fn()}
-          onDecrease={vi.fn()}
+          onIncrease={() => {}}
+          onDecrease={() => {}}
         />
       );
 

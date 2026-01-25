@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL ?? "api";
+import { BackendBaseUrl } from "@/BackendUrlContext";
 
 const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];
 
 function Portions() {
   const date = new Date().toISOString().split("T")[0];
   const queryClient = useQueryClient();
+  const baseUrl = useContext(BackendBaseUrl);
 
   const portionsQuery = useQuery({
     queryKey: ["portions"],
@@ -81,6 +81,7 @@ function Portions() {
 
 function Goals() {
   const queryClient = useQueryClient();
+  const baseUrl = useContext(BackendBaseUrl);
 
   const query = useQuery({
     queryKey: ["goals"],
