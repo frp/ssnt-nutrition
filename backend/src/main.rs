@@ -14,6 +14,7 @@
 
 use std::{
     collections::HashMap,
+    env,
     sync::{Arc, LazyLock, Mutex},
 };
 
@@ -28,7 +29,7 @@ use regex::Regex;
 use rusqlite::{Connection, fallible_iterator::FallibleIterator, params};
 use thiserror::Error;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
-use tracing::Level;
+use tracing::{Level, info};
 
 #[derive(Debug, Error)]
 enum AppError {
@@ -240,10 +241,13 @@ async fn main() {
         .with_max_level(Level::TRACE)
         .init();
 
+    let bind_address = env::var("PORTIONS_BIND_ADDRESS").unwrap_or("0.0.0.0:3000".into());
+
     let conn = Connection::open("nutrients.db").expect("Failed to open nutrients.db");
     setup_db(&conn).unwrap();
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    info!("Starting server at {}...", bind_address);
+    let listener = tokio::net::TcpListener::bind(bind_address).await.unwrap();
     axum::serve(listener, router(conn)).await.unwrap();
 }
 
