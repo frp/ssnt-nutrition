@@ -40,6 +40,12 @@ const createTestQueryClient = () =>
     },
   });
 
+const formatDate = (dateStr: string) => {
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
+    new Date(`${dateStr}T12:00:00Z`),
+  );
+};
+
 const renderWithClient = (ui: React.ReactElement) => {
   const queryClient = createTestQueryClient();
   return render(
@@ -323,7 +329,7 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
   });
 
@@ -332,14 +338,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     const prevButton = screen.getByRole("button", { name: "<" });
     await user.click(prevButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-14")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-14"))).toBeInTheDocument();
     });
   });
 
@@ -368,14 +374,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     const nextButton = screen.getByRole("button", { name: ">" });
     await user.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-16")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
   });
 
@@ -404,13 +410,13 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     // Navigate to 2024-01-16
     await user.click(screen.getByRole("button", { name: ">" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-16")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
 
     let proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
@@ -422,7 +428,7 @@ describe("Portions component", () => {
     // Navigate to 2024-01-17
     await user.click(screen.getByRole("button", { name: ">" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-17")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-17"))).toBeInTheDocument();
     });
 
     proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
@@ -432,7 +438,7 @@ describe("Portions component", () => {
     // Navigate to 2024-01-18
     await user.click(screen.getByRole("button", { name: ">" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-18")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-18"))).toBeInTheDocument();
     });
 
     proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
@@ -445,7 +451,7 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     const prevButton = screen.getByRole("button", { name: "<" });
@@ -453,7 +459,7 @@ describe("Portions component", () => {
     // Navigate to 2024-01-14
     await user.click(prevButton);
     await waitFor(() => {
-      expect(screen.getByText("2024-01-14")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-14"))).toBeInTheDocument();
       const carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
       const filledDots = carbsSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -469,14 +475,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-01"))).toBeInTheDocument();
     });
 
     const prevButton = screen.getByRole("button", { name: "<" });
     await user.click(prevButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-31")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-31"))).toBeInTheDocument();
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -492,14 +498,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-31")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-31"))).toBeInTheDocument();
     });
 
     const nextButton = screen.getByRole("button", { name: ">" });
     await user.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-01"))).toBeInTheDocument();
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -515,14 +521,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-01"))).toBeInTheDocument();
     });
 
     const prevButton = screen.getByRole("button", { name: "<" });
     await user.click(prevButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2023-12-31")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2023-12-31"))).toBeInTheDocument();
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -538,14 +544,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2023-12-31")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2023-12-31"))).toBeInTheDocument();
     });
 
     const nextButton = screen.getByRole("button", { name: ">" });
     await user.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-01"))).toBeInTheDocument();
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -561,13 +567,13 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-28")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-28"))).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: ">" }));
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-29")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-29"))).toBeInTheDocument();
     });
 
     let proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
@@ -579,7 +585,7 @@ describe("Portions component", () => {
     await user.click(screen.getByRole("button", { name: ">" }));
 
     await waitFor(() => {
-      expect(screen.getByText("2024-03-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-03-01"))).toBeInTheDocument();
     });
 
     proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
@@ -594,13 +600,13 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-03-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-03-01"))).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: "<" }));
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-29")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-29"))).toBeInTheDocument();
     });
 
     let carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
@@ -612,7 +618,7 @@ describe("Portions component", () => {
     await user.click(screen.getByRole("button", { name: "<" }));
 
     await waitFor(() => {
-      expect(screen.getByText("2024-02-28")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-02-28"))).toBeInTheDocument();
     });
 
     carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
@@ -627,14 +633,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2023-02-28")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2023-02-28"))).toBeInTheDocument();
     });
 
     const nextButton = screen.getByRole("button", { name: ">" });
     await user.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText("2023-03-01")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2023-03-01"))).toBeInTheDocument();
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
@@ -648,13 +654,13 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     // Navigate forward and check data
     await user.click(screen.getByRole("button", { name: ">" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-16")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
 
     let vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
@@ -665,7 +671,7 @@ describe("Portions component", () => {
 
     await user.click(screen.getByRole("button", { name: ">" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-17")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-17"))).toBeInTheDocument();
     });
 
     vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
@@ -677,7 +683,7 @@ describe("Portions component", () => {
     // Navigate back and verify data updates
     await user.click(screen.getByRole("button", { name: "<" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-16")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
 
     vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
@@ -688,7 +694,7 @@ describe("Portions component", () => {
 
     await user.click(screen.getByRole("button", { name: "<" }));
     await waitFor(() => {
-      expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+      expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
     vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");

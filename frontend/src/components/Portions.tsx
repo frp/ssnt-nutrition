@@ -18,27 +18,30 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
 
-function dayBefore(date: string) {
+function dayBefore(date: Date) {
   const d = new Date(date);
   d.setDate(d.getDate() - 1);
-  return d.toISOString().split("T")[0];
+  return d;
 }
 
-function dayAfter(date: string) {
+function dayAfter(date: Date) {
   const d = new Date(date);
   d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
+  return d;
 }
 
 export default function Portions() {
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(new Date());
   const queryClient = useQueryClient();
   const baseUrl = useContext(BackendBaseUrl);
 
+  const isoDate = date.toISOString().split("T")[0];
+  const dateStr = new Intl.DateTimeFormat("en-GB", {dateStyle: 'full'}).format(date);
+
   const portionsQuery = useQuery({
-    queryKey: ["portions", date],
+    queryKey: ["portions", isoDate],
     queryFn: () =>
-      fetch(`${baseUrl}/days/${date}/portions`).then((res) => res.json()),
+      fetch(`${baseUrl}/days/${isoDate}/portions`).then((res) => res.json()),
   });
 
   const goalsQuery = useQuery({
@@ -48,15 +51,13 @@ export default function Portions() {
 
   const mutation = useMutation({
     mutationFn: ({
-      date,
       name,
       command,
     }: {
-      date: string;
       name: string;
       command: string;
     }) =>
-      fetch(`${baseUrl}/days/${date}/portions/${name}/${command}`, {
+      fetch(`${baseUrl}/days/${isoDate}/portions/${name}/${command}`, {
         method: "POST",
       }),
     onSuccess: () => queryClient.invalidateQueries(),
@@ -75,7 +76,7 @@ export default function Portions() {
       <>
         <div className="header-nav">
           <button className="nav-button" onClick={() => setDate((d) => dayBefore(d))}>{"<"}</button>
-          <span>{date}</span>
+          <span>{dateStr}</span>
           <button className="nav-button" onClick={() => setDate((d) => dayAfter(d))}>{">"}</button>
         </div>
         <div className="nutrients-list">
@@ -86,10 +87,10 @@ export default function Portions() {
               count={portionsQuery.data[n] ?? 0}
               goal={goalsQuery.data[n] ?? 0}
               onIncrease={() =>
-                mutation.mutate({ date, name: n, command: "consume" })
+                mutation.mutate({ name: n, command: "consume" })
               }
               onDecrease={() =>
-                mutation.mutate({ date, name: n, command: "unconsume" })
+                mutation.mutate({ name: n, command: "unconsume" })
               }
             />
           ))}
