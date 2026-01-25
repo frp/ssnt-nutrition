@@ -21,35 +21,10 @@ import {
   afterEach,
   setSystemTime,
 } from "bun:test";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppContent from "../components/AppContent";
-import { BackendBaseUrl } from "@/BackendUrlContext";
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithClient = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BackendBaseUrl.Provider value="http://test-api">
-        {ui}
-      </BackendBaseUrl.Provider>
-    </QueryClientProvider>,
-  );
-};
+import { formatDate, renderWithClient } from "./utils";
 
 describe("AppContent", () => {
   beforeEach(() => {
@@ -102,13 +77,13 @@ describe("AppContent", () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+        expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
       });
 
       await user.click(screen.getByRole("button", { name: ">" }));
 
       await waitFor(() => {
-        expect(screen.getByText("2024-01-16")).toBeInTheDocument();
+        expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
       });
 
       // Switch to Goals view
@@ -121,14 +96,14 @@ describe("AppContent", () => {
       });
 
       // Date picker should not be visible in Goals view
-      expect(screen.queryByText("2024-01-16")).not.toBeInTheDocument();
+      expect(screen.queryByText(formatDate("2024-01-15"))).not.toBeInTheDocument();
 
       // Switch back to Portions view
       await user.click(screen.getByRole("button", { name: "← Back to Recording" }));
 
       // Date should reset to current date (2024-01-15)
       await waitFor(() => {
-        expect(screen.getByText("2024-01-15")).toBeInTheDocument();
+        expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
       });
 
       const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");

@@ -21,41 +21,10 @@ import {
   afterEach,
   setSystemTime,
 } from "bun:test";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Portions from "../components/Portions";
-import { BackendBaseUrl } from "@/BackendUrlContext";
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const formatDate = (dateStr: string) => {
-  return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
-    new Date(`${dateStr}T12:00:00Z`),
-  );
-};
-
-const renderWithClient = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BackendBaseUrl.Provider value="http://test-api">
-        {ui}
-      </BackendBaseUrl.Provider>
-    </QueryClientProvider>,
-  );
-};
+import { formatDate, renderWithClient } from "./utils";
 
 describe("Portions component", () => {
   const mockPortionsData = {
