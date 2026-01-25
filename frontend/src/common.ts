@@ -12,20 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import "./App.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AppContent from "./components/AppContent";
-
-const queryClient = new QueryClient();
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <div>
-        <AppContent />
-      </div>
-    </QueryClientProvider>
-  );
-}
-
-export default App;
+export const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];

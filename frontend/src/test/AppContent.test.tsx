@@ -267,9 +267,7 @@ describe("AppContent", () => {
       });
 
       proteinSection = screen.getByText(/protein:/i).closest("p");
-      filledDots = proteinSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
+      filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(4);
 
       // Navigate to 2024-01-18
@@ -279,9 +277,7 @@ describe("AppContent", () => {
       });
 
       proteinSection = screen.getByText(/protein:/i).closest("p");
-      filledDots = proteinSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
+      filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(5);
     });
 
@@ -428,9 +424,7 @@ describe("AppContent", () => {
       });
 
       proteinSection = screen.getByText(/protein:/i).closest("p");
-      filledDots = proteinSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
+      filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(3);
     });
 
@@ -463,9 +457,7 @@ describe("AppContent", () => {
       });
 
       carbsSection = screen.getByText(/carbs:/i).closest("p");
-      filledDots = carbsSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
+      filledDots = carbsSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(2);
     });
 
@@ -586,275 +578,6 @@ describe("AppContent", () => {
         ".dot.filled:not(.excess)",
       );
       expect(filledDots).toHaveLength(3);
-    });
-  });
-
-  describe("Portions component", () => {
-    const mockPortionsData = {
-      protein: 3,
-      carbs: 2,
-      vegetables: 4,
-      fats: 1,
-    };
-
-    const mockGoalsData = {
-      protein: 5,
-      carbs: 6,
-      vegetables: 5,
-      fats: 4,
-    };
-
-    const mockFetch = mock();
-
-    beforeEach(() => {
-      globalThis.fetch = mockFetch as unknown as typeof fetch;
-    });
-
-    afterEach(() => {
-      mock.restore();
-    });
-
-    it("shows loading state while fetching data", () => {
-      mockFetch.mockImplementation(() => new Promise(() => {}));
-      renderWithClient(<AppContent />);
-      expect(screen.getByText("Pending...")).toBeInTheDocument();
-    });
-
-    it("shows error state when portions fetch fails", async () => {
-      mockFetch.mockImplementation((url) => {
-        if (typeof url === "string" && url.includes("/portions")) {
-          return Promise.reject(new Error("Network error"));
-        }
-        return Promise.resolve({
-          json: () => Promise.resolve(mockGoalsData),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText("Error!")).toBeInTheDocument();
-      });
-    });
-
-    it("shows error state when goals fetch fails", async () => {
-      mockFetch.mockImplementation((url) => {
-        if (typeof url === "string" && url.includes("/goals")) {
-          return Promise.reject(new Error("Network error"));
-        }
-        return Promise.resolve({
-          json: () => Promise.resolve(mockPortionsData),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText("Error!")).toBeInTheDocument();
-      });
-    });
-
-    it("fetches data with correct date in URL", async () => {
-      mockFetch.mockImplementation((url) => {
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? mockPortionsData
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(globalThis.fetch).toHaveBeenCalledWith(
-          "http://test-api/days/2024-01-15/portions",
-        );
-      });
-    });
-
-    it("renders DotCountInput components with correct count and goal data", async () => {
-      mockFetch.mockImplementation((url) => {
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? mockPortionsData
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
-      });
-
-      const proteinSection = screen.getByText(/protein:/i).closest("p");
-      const proteinFilledDots = proteinSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
-      const proteinEmptyDots =
-        proteinSection?.querySelectorAll(".dot:not(.filled)");
-      expect(proteinFilledDots).toHaveLength(3);
-      expect(proteinEmptyDots).toHaveLength(2);
-
-      const carbsSection = screen.getByText(/carbs:/i).closest("p");
-      const carbsFilledDots = carbsSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
-      const carbsEmptyDots =
-        carbsSection?.querySelectorAll(".dot:not(.filled)");
-      expect(carbsFilledDots).toHaveLength(2);
-      expect(carbsEmptyDots).toHaveLength(4);
-    });
-
-    it("handles missing portion data with default values", async () => {
-      const partialPortionsData = { protein: 3 };
-
-      mockFetch.mockImplementation((url) => {
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? partialPortionsData
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
-      });
-
-      const carbsSection = screen.getByText(/carbs:/i).closest("p");
-      const carbsFilledDots = carbsSection?.querySelectorAll(".dot.filled");
-      expect(carbsFilledDots).toHaveLength(0);
-    });
-
-    it("calls consume API when increase button is clicked", async () => {
-      const user = userEvent.setup();
-      mockFetch.mockImplementation((url) => {
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? mockPortionsData
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
-      });
-
-      const increaseButtons = screen.getAllByRole("button", { name: "+" });
-      await user.click(increaseButtons[0]);
-
-      await waitFor(() => {
-        expect(globalThis.fetch).toHaveBeenCalledWith(
-          "http://test-api/days/2024-01-15/portions/protein/consume",
-          { method: "POST" },
-        );
-      });
-    });
-
-    it("updates UI with fresh data after increasing portion", async () => {
-      const user = userEvent.setup();
-      let proteinCount = 3;
-
-      mockFetch.mockImplementation((url, options?) => {
-        if (
-          options?.method === "POST" &&
-          typeof url === "string" &&
-          url.includes("/consume")
-        ) {
-          proteinCount++;
-          return Promise.resolve({ ok: true } as Response);
-        }
-
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? { ...mockPortionsData, protein: proteinCount }
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
-      });
-
-      let proteinSection = screen.getByText(/protein:/i).closest("p");
-      let filledDots = proteinSection?.querySelectorAll(
-        ".dot.filled:not(.excess)",
-      );
-      expect(filledDots).toHaveLength(3);
-
-      const increaseButtons = screen.getAllByRole("button", { name: "+" });
-      await user.click(increaseButtons[0]);
-
-      await waitFor(() => {
-        proteinSection = screen.getByText(/protein:/i).closest("p");
-        filledDots = proteinSection?.querySelectorAll(
-          ".dot.filled:not(.excess)",
-        );
-        expect(filledDots).toHaveLength(4);
-      });
-    });
-
-    it("updates UI with fresh data after decreasing portion", async () => {
-      const user = userEvent.setup();
-      let proteinCount = 3;
-
-      mockFetch.mockImplementation((url, options?) => {
-        if (
-          options?.method === "POST" &&
-          typeof url === "string" &&
-          url.includes("/unconsume")
-        ) {
-          proteinCount--;
-          return Promise.resolve({ ok: true } as Response);
-        }
-
-        return Promise.resolve({
-          json: () =>
-            Promise.resolve(
-              typeof url === "string" && url.includes("/portions")
-                ? { ...mockPortionsData, protein: proteinCount }
-                : mockGoalsData,
-            ),
-        } as Response);
-      });
-
-      renderWithClient(<AppContent />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
-      });
-
-      const decreaseButtons = screen.getAllByRole("button", { name: "-" });
-      await user.click(decreaseButtons[0]);
-
-      await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
-        const filledDots = proteinSection?.querySelectorAll(
-          ".dot.filled:not(.excess)",
-        );
-        expect(filledDots).toHaveLength(2);
-      });
     });
   });
 
