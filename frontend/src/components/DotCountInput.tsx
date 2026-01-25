@@ -28,23 +28,27 @@ export function DotCountInput({
   goal,
 }: NutrientProps) {
   return (
-    <p>
-      <button onClick={onDecrease}>-</button>
-      {name}:{" "}
-      {new Array(count).fill(count).map((_, i) => (
-        <span
-          className={`dot filled ${name} ${goal && i >= goal ? "excess" : ""}`}
-          key={i}
-        ></span>
-      ))}
-      {goal && count < goal
-        ? new Array(goal - count)
-            .fill(goal - count)
-            .map((_, i) => (
-              <span className={`dot ${name}`} key={count + i}></span>
-            ))
-        : []}
-      <button onClick={onIncrease}>+</button>
-    </p>
+    <div className="nutrient-row">
+      <div className="nutrient-label">{name}</div>
+      <div className="controls">
+        <div className="dots-container">
+          {new Array(count).fill(count).map((_, i) => (
+            <span
+              className={`dot filled ${name} ${goal && i >= goal ? "excess" : ""}`}
+              key={i}
+            ></span>
+          ))}
+          {goal && count < goal
+            ? new Array(goal - count)
+                .fill(goal - count)
+                .map((_, i) => (
+                  <span className={`dot ${name}`} key={count + i}></span>
+                ))
+            : []}
+        </div>
+        <button className="action-btn" onClick={onDecrease}>−</button>
+        <button className="action-btn" onClick={onIncrease}>+</button>
+      </div>
+    </div>
   );
 }

@@ -37,23 +37,35 @@ function Goals() {
   });
 
   if (query.isPending) {
-    return <>Pending...</>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (query.isError) {
-    return <>Error!</>;
+    return <div className="error">Error loading data</div>;
   }
 
+  // The gidden buttons are in place to ensure consistency of height with the Portions view.
   if (query.data) {
-    return NUTRIENTS.map((n) => (
-      <DotCountInput
-        name={n}
-        key={n}
-        count={query.data[n] ?? 0}
-        onIncrease={() => mutation.mutate({ name: n, command: "inc" })}
-        onDecrease={() => mutation.mutate({ name: n, command: "dec" })}
-      />
-    ));
+    return (
+      <>
+        <div className="header-nav">
+          <button className="nav-button" style={{ visibility: "hidden" }}>{"<"}</button>
+          <span>Daily Goals</span>
+          <button className="nav-button" style={{ visibility: "hidden" }}>{">"}</button>
+        </div>
+        <div className="nutrients-list">
+          {NUTRIENTS.map((n) => (
+            <DotCountInput
+              name={n}
+              key={n}
+              count={query.data[n] ?? 0}
+              onIncrease={() => mutation.mutate({ name: n, command: "inc" })}
+              onDecrease={() => mutation.mutate({ name: n, command: "dec" })}
+            />
+          ))}
+        </div>
+      </>
+    );
   }
 
   return <></>;
@@ -64,16 +76,24 @@ function Goals() {
 function AppContent() {
   const [settingGoals, setSettingGoals] = useState(false);
 
-  return settingGoals ? (
-    <>
-      <button onClick={() => setSettingGoals(false)}>Record Portions</button>
-      <Goals />
-    </>
-  ) : (
-    <>
-      <button onClick={() => setSettingGoals(true)}>Set Goals</button>
-      <Portions />
-    </>
+  return (
+    <div className="app-container">
+      {settingGoals ? (
+        <>
+          <button className="mode-toggle" onClick={() => setSettingGoals(false)}>
+            ← Back to Recording
+          </button>
+          <Goals />
+        </>
+      ) : (
+        <>
+          <button className="mode-toggle" onClick={() => setSettingGoals(true)}>
+            Edit Goals ⚙
+          </button>
+          <Portions />
+        </>
+      )}
+    </div>
   );
 }
 

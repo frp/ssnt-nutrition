@@ -29,9 +29,9 @@ describe('DotCountInput', () => {
         />
       );
 
-      expect(screen.getByText(/protein:/)).toBeInTheDocument();
+      expect(screen.getByText(/protein/)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: '+' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: '-' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '−' })).toBeInTheDocument();
     });
 
     it('renders correct number of filled dots', () => {
@@ -94,7 +94,7 @@ describe('DotCountInput', () => {
         />
       );
 
-      await user.click(screen.getByRole('button', { name: '-' }));
+      await user.click(screen.getByRole('button', { name: '−' }));
       expect(mockDecrease).toHaveBeenCalledTimes(1);
     });
 

@@ -63,34 +63,38 @@ export default function Portions() {
   });
 
   if (portionsQuery.isPending || goalsQuery.isPending) {
-    return <>Pending...</>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (portionsQuery.isError || goalsQuery.isError) {
-    return <>Error!</>;
+    return <div className="error">Error loading data</div>;
   }
 
   if (portionsQuery.data) {
     return (
-      <div>
-        <button onClick={() => setDate((d) => dayBefore(d))}>&lt;</button>
-        {date}
-        <button onClick={() => setDate((d) => dayAfter(d))}>&gt;</button>
-        {NUTRIENTS.map((n) => (
-          <DotCountInput
-            key={n}
-            name={n}
-            count={portionsQuery.data[n] ?? 0}
-            goal={goalsQuery.data[n] ?? 0}
-            onIncrease={() =>
-              mutation.mutate({ date, name: n, command: "consume" })
-            }
-            onDecrease={() =>
-              mutation.mutate({ date, name: n, command: "unconsume" })
-            }
-          />
-        ))}
-      </div>
+      <>
+        <div className="header-nav">
+          <button className="nav-button" onClick={() => setDate((d) => dayBefore(d))}>{"<"}</button>
+          <span>{date}</span>
+          <button className="nav-button" onClick={() => setDate((d) => dayAfter(d))}>{">"}</button>
+        </div>
+        <div className="nutrients-list">
+          {NUTRIENTS.map((n) => (
+            <DotCountInput
+              key={n}
+              name={n}
+              count={portionsQuery.data[n] ?? 0}
+              goal={goalsQuery.data[n] ?? 0}
+              onIncrease={() =>
+                mutation.mutate({ date, name: n, command: "consume" })
+              }
+              onDecrease={() =>
+                mutation.mutate({ date, name: n, command: "unconsume" })
+              }
+            />
+          ))}
+        </div>
+      </>
     );
   }
 

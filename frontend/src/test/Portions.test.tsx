@@ -81,7 +81,7 @@ describe("Portions component", () => {
   it("shows loading state while fetching data", () => {
     mockFetch.mockImplementation(() => new Promise(() => {}));
     renderWithClient(<Portions />);
-    expect(screen.getByText("Pending...")).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
   it("shows error state when portions fetch fails", async () => {
@@ -97,7 +97,7 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("Error!")).toBeInTheDocument();
+      expect(screen.getByText("Error loading data")).toBeInTheDocument();
     });
   });
 
@@ -114,7 +114,7 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText("Error!")).toBeInTheDocument();
+      expect(screen.getByText("Error loading data")).toBeInTheDocument();
     });
   });
 
@@ -154,10 +154,10 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
-    const proteinSection = screen.getByText(/protein:/i).closest("p");
+    const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
     const proteinFilledDots = proteinSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -166,7 +166,7 @@ describe("Portions component", () => {
     expect(proteinFilledDots).toHaveLength(3);
     expect(proteinEmptyDots).toHaveLength(2);
 
-    const carbsSection = screen.getByText(/carbs:/i).closest("p");
+    const carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
     const carbsFilledDots = carbsSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -192,10 +192,10 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
-    const carbsSection = screen.getByText(/carbs:/i).closest("p");
+    const carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
     const carbsFilledDots = carbsSection?.querySelectorAll(".dot.filled");
     expect(carbsFilledDots).toHaveLength(0);
   });
@@ -216,7 +216,7 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
     const increaseButtons = screen.getAllByRole("button", { name: "+" });
@@ -257,10 +257,10 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
-    let proteinSection = screen.getByText(/protein:/i).closest("p");
+    let proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
     let filledDots = proteinSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -270,7 +270,7 @@ describe("Portions component", () => {
     await user.click(increaseButtons[0]);
 
     await waitFor(() => {
-      proteinSection = screen.getByText(/protein:/i).closest("p");
+      proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(4);
     });
@@ -303,14 +303,14 @@ describe("Portions component", () => {
     renderWithClient(<Portions />);
 
     await waitFor(() => {
-      expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
-    const decreaseButtons = screen.getAllByRole("button", { name: "-" });
+    const decreaseButtons = screen.getAllByRole("button", { name: "−" });
     await user.click(decreaseButtons[0]);
 
     await waitFor(() => {
-      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );

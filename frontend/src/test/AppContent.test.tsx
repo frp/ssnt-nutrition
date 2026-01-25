@@ -83,17 +83,17 @@ describe("AppContent", () => {
       renderWithClient(<AppContent />);
 
       expect(
-        screen.getByRole("button", { name: "Set Goals" }),
+        screen.getByRole("button", { name: "Edit Goals ⚙" }),
       ).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      await user.click(screen.getByRole("button", { name: "Edit Goals ⚙" }));
       expect(
-        screen.getByRole("button", { name: "Record Portions" }),
+        screen.getByRole("button", { name: "← Back to Recording" }),
       ).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "Record Portions" }));
+      await user.click(screen.getByRole("button", { name: "← Back to Recording" }));
       expect(
-        screen.getByRole("button", { name: "Set Goals" }),
+        screen.getByRole("button", { name: "Edit Goals ⚙" }),
       ).toBeInTheDocument();
     });
   });
@@ -158,10 +158,10 @@ describe("AppContent", () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+        expect(screen.getByText(/protein/i)).toBeInTheDocument();
       });
 
-      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -189,14 +189,14 @@ describe("AppContent", () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+        expect(screen.getByText(/protein/i)).toBeInTheDocument();
       });
 
       const prevButton = screen.getByRole("button", { name: "<" });
       await user.click(prevButton);
 
       await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -225,14 +225,14 @@ describe("AppContent", () => {
       renderWithClient(<AppContent />);
 
       await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+        expect(screen.getByText(/protein/i)).toBeInTheDocument();
       });
 
       const nextButton = screen.getByRole("button", { name: ">" });
       await user.click(nextButton);
 
       await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -254,7 +254,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-16")).toBeInTheDocument();
       });
 
-      let proteinSection = screen.getByText(/protein:/i).closest("p");
+      let proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       let filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -266,7 +266,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-17")).toBeInTheDocument();
       });
 
-      proteinSection = screen.getByText(/protein:/i).closest("p");
+      proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(4);
 
@@ -276,7 +276,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-18")).toBeInTheDocument();
       });
 
-      proteinSection = screen.getByText(/protein:/i).closest("p");
+      proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(5);
     });
@@ -295,7 +295,7 @@ describe("AppContent", () => {
       await user.click(prevButton);
       await waitFor(() => {
         expect(screen.getByText("2024-01-14")).toBeInTheDocument();
-        const carbsSection = screen.getByText(/carbs:/i).closest("p");
+        const carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
         const filledDots = carbsSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -318,7 +318,7 @@ describe("AppContent", () => {
 
       await waitFor(() => {
         expect(screen.getByText("2024-01-31")).toBeInTheDocument();
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -341,7 +341,7 @@ describe("AppContent", () => {
 
       await waitFor(() => {
         expect(screen.getByText("2024-02-01")).toBeInTheDocument();
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -364,7 +364,7 @@ describe("AppContent", () => {
 
       await waitFor(() => {
         expect(screen.getByText("2023-12-31")).toBeInTheDocument();
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -387,7 +387,7 @@ describe("AppContent", () => {
 
       await waitFor(() => {
         expect(screen.getByText("2024-01-01")).toBeInTheDocument();
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -411,7 +411,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-02-29")).toBeInTheDocument();
       });
 
-      let proteinSection = screen.getByText(/protein:/i).closest("p");
+      let proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       let filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -423,7 +423,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-03-01")).toBeInTheDocument();
       });
 
-      proteinSection = screen.getByText(/protein:/i).closest("p");
+      proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       filledDots = proteinSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(3);
     });
@@ -444,7 +444,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-02-29")).toBeInTheDocument();
       });
 
-      let carbsSection = screen.getByText(/carbs:/i).closest("p");
+      let carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
       let filledDots = carbsSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -456,7 +456,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-02-28")).toBeInTheDocument();
       });
 
-      carbsSection = screen.getByText(/carbs:/i).closest("p");
+      carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
       filledDots = carbsSection?.querySelectorAll(".dot.filled:not(.excess)");
       expect(filledDots).toHaveLength(2);
     });
@@ -476,7 +476,7 @@ describe("AppContent", () => {
 
       await waitFor(() => {
         expect(screen.getByText("2023-03-01")).toBeInTheDocument();
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(
           ".dot.filled:not(.excess)",
         );
@@ -498,7 +498,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-16")).toBeInTheDocument();
       });
 
-      let vegetablesSection = screen.getByText(/vegetables:/i).closest("p");
+      let vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
       let filledDots = vegetablesSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -509,7 +509,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-17")).toBeInTheDocument();
       });
 
-      vegetablesSection = screen.getByText(/vegetables:/i).closest("p");
+      vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
       filledDots = vegetablesSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -521,7 +521,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-16")).toBeInTheDocument();
       });
 
-      vegetablesSection = screen.getByText(/vegetables:/i).closest("p");
+      vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
       filledDots = vegetablesSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -532,7 +532,7 @@ describe("AppContent", () => {
         expect(screen.getByText("2024-01-15")).toBeInTheDocument();
       });
 
-      vegetablesSection = screen.getByText(/vegetables:/i).closest("p");
+      vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
       filledDots = vegetablesSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -554,11 +554,11 @@ describe("AppContent", () => {
       });
 
       // Switch to Goals view
-      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      await user.click(screen.getByRole("button", { name: "Edit Goals ⚙" }));
 
       await waitFor(() => {
         expect(
-          screen.getByRole("button", { name: "Record Portions" }),
+          screen.getByRole("button", { name: "← Back to Recording" }),
         ).toBeInTheDocument();
       });
 
@@ -566,14 +566,14 @@ describe("AppContent", () => {
       expect(screen.queryByText("2024-01-16")).not.toBeInTheDocument();
 
       // Switch back to Portions view
-      await user.click(screen.getByRole("button", { name: "Record Portions" }));
+      await user.click(screen.getByRole("button", { name: "← Back to Recording" }));
 
       // Date should reset to current date (2024-01-15)
       await waitFor(() => {
         expect(screen.getByText("2024-01-15")).toBeInTheDocument();
       });
 
-      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -604,9 +604,9 @@ describe("AppContent", () => {
       mockFetch.mockImplementation(() => new Promise(() => {}));
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      await user.click(screen.getByRole("button", { name: "Edit Goals ⚙" }));
 
-      expect(screen.getByText("Pending...")).toBeInTheDocument();
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
     });
 
     it("renders DotCountInput components with correct goal counts", async () => {
@@ -618,13 +618,13 @@ describe("AppContent", () => {
       );
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      await user.click(screen.getByRole("button", { name: "Edit Goals ⚙" }));
 
       await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+        expect(screen.getByText(/protein/i)).toBeInTheDocument();
       });
 
-      const proteinSection = screen.getByText(/protein:/i).closest("p");
+      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
       const proteinFilledDots = proteinSection?.querySelectorAll(".dot.filled");
       expect(proteinFilledDots).toHaveLength(5);
     });
@@ -650,17 +650,17 @@ describe("AppContent", () => {
       });
 
       renderWithClient(<AppContent />);
-      await user.click(screen.getByRole("button", { name: "Set Goals" }));
+      await user.click(screen.getByRole("button", { name: "Edit Goals ⚙" }));
 
       await waitFor(() => {
-        expect(screen.getByText(/protein:/i)).toBeInTheDocument();
+        expect(screen.getByText(/protein/i)).toBeInTheDocument();
       });
 
       const increaseButtons = screen.getAllByRole("button", { name: "+" });
       await user.click(increaseButtons[0]);
 
       await waitFor(() => {
-        const proteinSection = screen.getByText(/protein:/i).closest("p");
+        const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
         const filledDots = proteinSection?.querySelectorAll(".dot.filled");
         expect(filledDots).toHaveLength(6);
       });

@@ -15,31 +15,174 @@ limitations under the License.
 */
 
 #root {
-    max-width: 1280px;
+    max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     padding: 2rem;
 }
 
-.dot {
-    height: 1.5em;
-    width: 1.5em;
-    margin-left: 0.2em;
-    margin-right: 0.2em;
-    border-color: var(--color);
-    border-width: 0.15em;
-    border-style: solid;
+/* Card Container */
+.app-container {
+    background-color: oklch(1 0 0);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Header / Date Navigation */
+.header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: oklch(0.3 0.05 250);
+}
+
+.header-nav span {
+    font-variant-numeric: tabular-nums;
+}
+
+.nav-button {
+    background: transparent;
+    border: 1px solid oklch(0.93 0 0);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    color: oklch(0.5 0 0);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.nav-button:hover {
+    background: oklch(0.97 0 0);
+    border-color: oklch(0.87 0 0);
+    color: oklch(0.2 0 0);
+}
+
+/* Mode Toggle Button */
+.mode-toggle {
+    align-self: flex-end;
+    margin-bottom: 0;
+    background-color: oklch(0.97 0 0);
+    color: oklch(0.4 0 0);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid oklch(0.88 0 0);
+    cursor: pointer;
+}
+.mode-toggle:hover {
+    background-color: oklch(0.93 0 0);
+}
+
+/* Nutrients List */
+.nutrients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Nutrient Row */
+.nutrient-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 12px;
+    background-color: oklch(0.99 0 0);
+    border: 1px solid oklch(0.94 0 0);
+    transition: background-color 0.2s;
+}
+
+.nutrient-row:hover {
+    background-color: oklch(0.97 0 0);
+}
+
+.nutrient-label {
+    width: 100px;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: oklch(0.35 0 0);
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    display: inline-block;
+    background-color: oklch(1 0 0);
+    border: 1px solid oklch(0.88 0 0);
+    color: oklch(0.45 0 0);
+    font-weight: bold;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background-color: oklch(0.95 0 0);
+    color: oklch(0.2 0 0);
+    border-color: oklch(0.8 0 0);
+}
+
+.dots-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 0 0.5rem;
+    min-height: 24px;
+}
+
+/* Dots */
+.dot {
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--color);
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
 }
 
 .filled {
     background-color: var(--color);
+    box-shadow: 0 0 4px var(--color);
 }
 
 .excess {
     border-color: oklch(0.45 0.14 30);
+    background-color: oklch(0.45 0.14 30) !important;
+    box-shadow: none;
+    opacity: 0.8;
 }
 
+/* Loading / Error */
+.loading, .error {
+    text-align: center;
+    padding: 2rem;
+    color: oklch(0.45 0 0);
+    font-style: italic;
+}
+
+.error {
+    color: oklch(0.5 0.2 30);
+}
+
+/* Nutrient Colors */
 .protein {
     --color: oklch(0.7566 0.121 221.19);
 }
