@@ -19,13 +19,25 @@ import { BackendBaseUrl } from "@/BackendUrlContext";
 
 const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];
 
+function dayBefore(date: string) {
+  const d = new Date(date);
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split("T")[0];
+}
+
+function dayAfter(date: string) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
 function Portions() {
-  const date = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const queryClient = useQueryClient();
   const baseUrl = useContext(BackendBaseUrl);
 
   const portionsQuery = useQuery({
-    queryKey: ["portions"],
+    queryKey: ["portions", date],
     queryFn: () =>
       fetch(`${baseUrl}/days/${date}/portions`).then((res) => res.json()),
   });
@@ -60,20 +72,27 @@ function Portions() {
   }
 
   if (portionsQuery.data) {
-    return NUTRIENTS.map((n) => (
-      <DotCountInput
-        key={n}
-        name={n}
-        count={portionsQuery.data[n] ?? 0}
-        goal={goalsQuery.data[n] ?? 0}
-        onIncrease={() =>
-          mutation.mutate({ date, name: n, command: "consume" })
-        }
-        onDecrease={() =>
-          mutation.mutate({ date, name: n, command: "unconsume" })
-        }
-      />
-    ));
+    return (
+      <div>
+        <button onClick={() => setDate((d) => dayBefore(d))}>&lt;</button>
+        {date}
+        <button onClick={() => setDate((d) => dayAfter(d))}>&gt;</button>
+        {NUTRIENTS.map((n) => (
+          <DotCountInput
+            key={n}
+            name={n}
+            count={portionsQuery.data[n] ?? 0}
+            goal={goalsQuery.data[n] ?? 0}
+            onIncrease={() =>
+              mutation.mutate({ date, name: n, command: "consume" })
+            }
+            onDecrease={() =>
+              mutation.mutate({ date, name: n, command: "unconsume" })
+            }
+          />
+        ))}
+      </div>
+    );
   }
 
   return <></>;
