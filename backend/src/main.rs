@@ -208,6 +208,9 @@ fn router(conn: rusqlite::Connection) -> Router {
 }
 
 fn setup_db(conn: &Connection) -> Result<(), rusqlite::Error> {
+    // SQLite3 performance settings.
+    // Without these, even simple writes take 10-15ms. With these, they're nearly instantenuous (<1ms).
+    conn.execute_batch("PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL;")?;
     // Design notes:
     // - pure event sourcing for sync and simple design
     // - PRIMARY KEY is id, not timestamp, to save me from battling disambiguation if
