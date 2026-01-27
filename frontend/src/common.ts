@@ -12,4 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as z from "zod/mini";
+
 export const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];
+
+export const PortionsOfNutrients = z.record(z.string(), z.number());
+export type PortionsOfNutrients = z.infer<typeof PortionsOfNutrients>;

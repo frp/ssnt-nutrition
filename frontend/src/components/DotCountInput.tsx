@@ -15,39 +15,69 @@
 type NutrientProps = {
   name: string;
   count: number;
+  inProgress?: number;
   goal?: number;
   onIncrease: () => void;
   onDecrease: () => void;
 };
 
+/**
+ * Component that displays a count as a series of dots.
+ *
+ * The `inProgress` prop allows for optimistic UI updates:
+ * - A positive value adds "in-progress" dots (representing a pending increase).
+ * - A negative value visually converts filled dots to "in-progress" dots (representing a pending decrease).
+ */
 export function DotCountInput({
   count,
+  inProgress,
   name,
   onIncrease,
   onDecrease,
   goal,
 }: NutrientProps) {
+  const numInProgress = inProgress ?? 0;
+  const filledDots = numInProgress < 0 ? count + numInProgress : count;
+  const inProgressDots = Math.abs(numInProgress);
   return (
     <div className="nutrient-row">
       <div className="nutrient-label">{name}</div>
       <div className="controls">
         <div className="dots-container">
-          {new Array(count).fill(count).map((_, i) => (
+          {new Array(filledDots).fill(filledDots).map((_, i) => (
             <span
               className={`dot filled ${name} ${goal && i >= goal ? "excess" : ""}`}
               key={i}
             ></span>
           ))}
-          {goal && count < goal
-            ? new Array(goal - count)
-                .fill(goal - count)
+          {numInProgress
+            ? new Array(inProgressDots)
+                .fill(inProgressDots)
+                .map((_, i) => (
+                  <span
+                    className={`dot in-progress ${name} ${goal && filledDots + i >= goal ? "excess" : ""}`}
+                    key={i}
+                  ></span>
+                ))
+            : []}
+          {goal && filledDots + inProgressDots < goal
+            ? new Array(goal - filledDots - inProgressDots)
+                .fill(goal - filledDots - inProgressDots)
                 .map((_, i) => (
                   <span className={`dot ${name}`} key={count + i}></span>
                 ))
             : []}
         </div>
-        <button className="action-btn" onClick={onDecrease}>−</button>
-        <button className="action-btn" onClick={onIncrease}>+</button>
+        <button
+          className="action-btn"
+          onClick={onDecrease}
+          disabled={count + numInProgress == 0}
+        >
+          −
+        </button>
+        <button className="action-btn" onClick={onIncrease}>
+          +
+        </button>
       </div>
     </div>
   );

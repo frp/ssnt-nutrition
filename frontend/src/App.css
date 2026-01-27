@@ -25,7 +25,7 @@ limitations under the License.
 .app-container {
     background-color: oklch(1 0 0);
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     padding: 2rem;
     display: flex;
     flex-direction: column;
@@ -163,6 +163,11 @@ limitations under the License.
     box-shadow: 0 0 4px var(--color);
 }
 
+.in-progress {
+    background-color: var(--in-progress-color);
+    box-shadow: 0 0 4px var(--in-progress-color);
+}
+
 .excess {
     border-color: oklch(0.45 0.14 30);
     background-color: oklch(0.45 0.14 30) !important;
@@ -170,8 +175,14 @@ limitations under the License.
     opacity: 0.8;
 }
 
+.excess.in-progress {
+    border-color: oklch(0.55 0.14 30);
+    background-color: oklch(0.55 0.14 30) !important;
+}
+
 /* Loading / Error */
-.loading, .error {
+.loading,
+.error {
     text-align: center;
     padding: 2rem;
     color: oklch(0.45 0 0);
@@ -185,18 +196,22 @@ limitations under the License.
 /* Nutrient Colors */
 .protein {
     --color: oklch(0.7566 0.121 221.19);
+    --in-progress-color: oklch(0.8566 0.121 221.19);
 }
 
 .vegetables {
     --color: oklch(0.8041 0.1858 129.04);
+    --in-progress-color: oklch(0.9041 0.1858 129.04);
 }
 
 .carbs {
     --color: oklch(0.6962 0.1827 48.13);
+    --in-progress-color: oklch(0.7962 0.1827 48.13);
 }
 
 .fats {
     --color: oklch(0.8516 0.1732 89.43);
+    --in-progress-color: oklch(0.9516 0.1732 89.43);
 }
 
 @media (max-width: 600px) {

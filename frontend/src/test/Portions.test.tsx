@@ -65,7 +65,7 @@ describe("Portions component", () => {
     mock.clearAllMocks();
     setSystemTime(new Date("2024-01-15T12:00:00Z"));
     globalThis.fetch = mockFetch as unknown as typeof fetch;
-    
+
     mockFetch.mockImplementation((url) => {
       if (typeof url === "string" && url.includes("/portions")) {
         const dateMatch = url.match(/days\/([^/]+)\/portions/);
@@ -141,7 +141,9 @@ describe("Portions component", () => {
       expect(screen.getByText(/protein/i)).toBeInTheDocument();
     });
 
-    const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+    const proteinSection = screen
+      .getByText(/protein/i)
+      .closest(".nutrient-row");
     const proteinFilledDots = proteinSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -203,6 +205,123 @@ describe("Portions component", () => {
     });
   });
 
+  it("shows in-progress state while increasing portion", async () => {
+    const user = userEvent.setup();
+    let resolveMutation: (value: unknown) => void;
+
+    mockFetch.mockImplementation((url, options?) => {
+      if (
+        options?.method === "POST" &&
+        typeof url === "string" &&
+        url.includes("/consume")
+      ) {
+        return new Promise((resolve) => {
+          resolveMutation = () => resolve({ ok: true } as Response);
+        });
+      }
+
+      if (typeof url === "string" && url.includes("/portions")) {
+        return Promise.resolve({
+          json: () => Promise.resolve(mockPortionsData),
+        } as Response);
+      }
+
+      return Promise.resolve({
+        json: () => Promise.resolve(mockGoalsData),
+      } as Response);
+    });
+
+    renderWithClient(<Portions />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
+    });
+
+    const increaseButtons = screen.getAllByRole("button", { name: "+" });
+    await user.click(increaseButtons[0]);
+
+    await waitFor(() => {
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
+      const inProgressDots =
+        proteinSection?.querySelectorAll(".dot.in-progress");
+      expect(inProgressDots).toHaveLength(1);
+    });
+
+    resolveMutation!(null);
+
+    await waitFor(() => {
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
+      const inProgressDots =
+        proteinSection?.querySelectorAll(".dot.in-progress");
+      expect(inProgressDots).toHaveLength(0);
+    });
+  });
+
+  it("shows in-progress state while decreasing portion", async () => {
+    const user = userEvent.setup();
+    let resolveMutation: (value: unknown) => void;
+
+    mockFetch.mockImplementation((url, options?) => {
+      if (
+        options?.method === "POST" &&
+        typeof url === "string" &&
+        url.includes("/unconsume")
+      ) {
+        return new Promise((resolve) => {
+          resolveMutation = () => resolve({ ok: true } as Response);
+        });
+      }
+
+      if (typeof url === "string" && url.includes("/portions")) {
+        return Promise.resolve({
+          json: () => Promise.resolve(mockPortionsData),
+        } as Response);
+      }
+
+      return Promise.resolve({
+        json: () => Promise.resolve(mockGoalsData),
+      } as Response);
+    });
+
+    renderWithClient(<Portions />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
+    });
+
+    const decreaseButtons = screen.getAllByRole("button", { name: "−" });
+    await user.click(decreaseButtons[0]);
+
+    await waitFor(() => {
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
+      const inProgressDots =
+        proteinSection?.querySelectorAll(".dot.in-progress");
+      expect(inProgressDots).toHaveLength(1);
+
+      const filledDots = proteinSection?.querySelectorAll(
+        ".dot.filled:not(.excess)",
+      );
+      expect(filledDots).toHaveLength(2);
+    });
+
+    resolveMutation!(null);
+
+    await waitFor(() => {
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
+      const inProgressDots =
+        proteinSection?.querySelectorAll(".dot.in-progress");
+      expect(inProgressDots).toHaveLength(0);
+    });
+  });
+
   it("updates UI with fresh data after increasing portion", async () => {
     const user = userEvent.setup();
     let proteinCount = 3;
@@ -216,11 +335,12 @@ describe("Portions component", () => {
         proteinCount++;
         return Promise.resolve({ ok: true } as Response);
       }
-      
+
       // Use standard logic for GET but return dynamic protein count
       if (typeof url === "string" && url.includes("/portions")) {
-         return Promise.resolve({
-          json: () => Promise.resolve({ ...mockPortionsData, protein: proteinCount }),
+        return Promise.resolve({
+          json: () =>
+            Promise.resolve({ ...mockPortionsData, protein: proteinCount }),
         } as Response);
       }
 
@@ -266,8 +386,9 @@ describe("Portions component", () => {
       }
 
       if (typeof url === "string" && url.includes("/portions")) {
-         return Promise.resolve({
-          json: () => Promise.resolve({ ...mockPortionsData, protein: proteinCount }),
+        return Promise.resolve({
+          json: () =>
+            Promise.resolve({ ...mockPortionsData, protein: proteinCount }),
         } as Response);
       }
 
@@ -286,7 +407,9 @@ describe("Portions component", () => {
     await user.click(decreaseButtons[0]);
 
     await waitFor(() => {
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -330,7 +453,9 @@ describe("Portions component", () => {
     await user.click(prevButton);
 
     await waitFor(() => {
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -366,7 +491,9 @@ describe("Portions component", () => {
     await user.click(nextButton);
 
     await waitFor(() => {
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -452,7 +579,9 @@ describe("Portions component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(formatDate("2024-01-31"))).toBeInTheDocument();
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -475,7 +604,9 @@ describe("Portions component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(formatDate("2024-02-01"))).toBeInTheDocument();
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -498,7 +629,9 @@ describe("Portions component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(formatDate("2023-12-31"))).toBeInTheDocument();
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -521,7 +654,9 @@ describe("Portions component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(formatDate("2024-01-01"))).toBeInTheDocument();
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -579,9 +714,7 @@ describe("Portions component", () => {
     });
 
     let carbsSection = screen.getByText(/carbs/i).closest(".nutrient-row");
-    let filledDots = carbsSection?.querySelectorAll(
-      ".dot.filled:not(.excess)",
-    );
+    let filledDots = carbsSection?.querySelectorAll(".dot.filled:not(.excess)");
     expect(filledDots).toHaveLength(2);
 
     await user.click(screen.getByRole("button", { name: "<" }));
@@ -610,7 +743,9 @@ describe("Portions component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(formatDate("2023-03-01"))).toBeInTheDocument();
-      const proteinSection = screen.getByText(/protein/i).closest(".nutrient-row");
+      const proteinSection = screen
+        .getByText(/protein/i)
+        .closest(".nutrient-row");
       const filledDots = proteinSection?.querySelectorAll(
         ".dot.filled:not(.excess)",
       );
@@ -632,7 +767,9 @@ describe("Portions component", () => {
       expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
 
-    let vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
+    let vegetablesSection = screen
+      .getByText(/vegetables/i)
+      .closest(".nutrient-row");
     let filledDots = vegetablesSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -643,7 +780,9 @@ describe("Portions component", () => {
       expect(screen.getByText(formatDate("2024-01-17"))).toBeInTheDocument();
     });
 
-    vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
+    vegetablesSection = screen
+      .getByText(/vegetables/i)
+      .closest(".nutrient-row");
     filledDots = vegetablesSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -655,7 +794,9 @@ describe("Portions component", () => {
       expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
     });
 
-    vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
+    vegetablesSection = screen
+      .getByText(/vegetables/i)
+      .closest(".nutrient-row");
     filledDots = vegetablesSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );
@@ -666,7 +807,9 @@ describe("Portions component", () => {
       expect(screen.getByText(formatDate("2024-01-15"))).toBeInTheDocument();
     });
 
-    vegetablesSection = screen.getByText(/vegetables/i).closest(".nutrient-row");
+    vegetablesSection = screen
+      .getByText(/vegetables/i)
+      .closest(".nutrient-row");
     filledDots = vegetablesSection?.querySelectorAll(
       ".dot.filled:not(.excess)",
     );

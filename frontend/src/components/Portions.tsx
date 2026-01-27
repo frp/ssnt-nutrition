@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { BackendBaseUrl } from "@/BackendUrlContext";
-import { NUTRIENTS } from "@/common";
+import { NUTRIENTS, PortionsOfNutrients } from "@/common";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
@@ -36,31 +36,69 @@ export default function Portions() {
   const baseUrl = useContext(BackendBaseUrl);
 
   const isoDate = date.toISOString().split("T")[0];
-  const dateStr = new Intl.DateTimeFormat("en-GB", {dateStyle: 'full'}).format(date);
+  const dateStr = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "full",
+  }).format(date);
 
   const portionsQuery = useQuery({
     queryKey: ["portions", isoDate],
     queryFn: () =>
-      fetch(`${baseUrl}/days/${isoDate}/portions`).then((res) => res.json()),
+      fetch(`${baseUrl}/days/${isoDate}/portions`)
+        .then((res) => res.json())
+        .then((data) => PortionsOfNutrients.parse(data)),
   });
 
   const goalsQuery = useQuery({
     queryKey: ["goals"],
-    queryFn: () => fetch(`${baseUrl}/goals`).then((res) => res.json()),
+    queryFn: () =>
+      fetch(`${baseUrl}/goals`)
+        .then((res) => res.json())
+        .then((data) => PortionsOfNutrients.parse(data)),
   });
 
+  // { 'protein': 1 } would mean that pending mutations involve 1 portion of protein
+  const [mutationsInProgress, setMutationsInProgress] = useState(
+    {} as PortionsOfNutrients,
+  );
+
+  type MutationInputs = {
+    name: string;
+    command: string;
+  };
+
   const mutation = useMutation({
-    mutationFn: ({
-      name,
-      command,
-    }: {
-      name: string;
-      command: string;
-    }) =>
+    mutationFn: ({ name, command }: MutationInputs) =>
       fetch(`${baseUrl}/days/${isoDate}/portions/${name}/${command}`, {
         method: "POST",
       }),
-    onSuccess: () => queryClient.invalidateQueries(),
+    onMutate: ({ name, command }) => {
+      setMutationsInProgress((m) => {
+        return {
+          ...m,
+          [name]: (m[name] ?? 0) + (command === "consume" ? 1 : -1),
+        };
+      });
+    },
+    onSuccess: (_, { name, command }) => {
+      queryClient.setQueryData(
+        ["portions", isoDate],
+        (data: PortionsOfNutrients) => {
+          return {
+            ...data,
+            [name]: (data[name] ?? 0) + (command === "consume" ? 1 : -1),
+          };
+        },
+      );
+      setMutationsInProgress((m) => {
+        // To remove from "in progress", add the opposite of the mutation direction.
+        return {
+          ...m,
+          [name]: (m[name] ?? 0) + (command === "consume" ? -1 : 1),
+        };
+      });
+    },
+    // TODO: add an onError case
+    // TODO: add idempotence
   });
 
   if (portionsQuery.isPending || goalsQuery.isPending) {
@@ -75,9 +113,19 @@ export default function Portions() {
     return (
       <>
         <div className="header-nav">
-          <button className="nav-button" onClick={() => setDate((d) => dayBefore(d))}>{"<"}</button>
+          <button
+            className="nav-button"
+            onClick={() => setDate((d) => dayBefore(d))}
+          >
+            {"<"}
+          </button>
           <span>{dateStr}</span>
-          <button className="nav-button" onClick={() => setDate((d) => dayAfter(d))}>{">"}</button>
+          <button
+            className="nav-button"
+            onClick={() => setDate((d) => dayAfter(d))}
+          >
+            {">"}
+          </button>
         </div>
         <div className="nutrients-list">
           {NUTRIENTS.map((n) => (
@@ -85,6 +133,7 @@ export default function Portions() {
               key={n}
               name={n}
               count={portionsQuery.data[n] ?? 0}
+              inProgress={mutationsInProgress[n] ?? 0}
               goal={goalsQuery.data[n] ?? 0}
               onIncrease={() =>
                 mutation.mutate({ name: n, command: "consume" })
