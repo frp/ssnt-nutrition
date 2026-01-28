@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+cd frontend
+bunx @biomejs/biome check src
+bun test
+
+cd ../backend
+cargo clippy
+cargo test
