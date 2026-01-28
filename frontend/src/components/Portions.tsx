@@ -17,6 +17,7 @@ import { NUTRIENTS, PortionsOfNutrients } from "@/common";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
+import toast from "react-hot-toast";
 
 function dayBefore(date: Date) {
   const d = new Date(date);
@@ -97,7 +98,18 @@ export default function Portions() {
         };
       });
     },
-    // TODO: add an onError case
+    onError: (error, { name, command }) => {
+      toast.error(
+        `Error communicating with the backend. Please check your Internet connection.`,
+      );
+      setMutationsInProgress((m) => {
+        // To remove from "in progress", add the opposite of the mutation direction.
+        return {
+          ...m,
+          [name]: (m[name] ?? 0) + (command === "consume" ? -1 : 1),
+        };
+      });
+    },
     // TODO: add idempotence
   });
 

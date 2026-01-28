@@ -18,6 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BackendBaseUrl } from "@/BackendUrlContext";
 import Portions from "./Portions";
 import { NUTRIENTS } from "@/common";
+import { Toaster } from "react-hot-toast";
 
 function Goals() {
   const queryClient = useQueryClient();
@@ -49,9 +50,13 @@ function Goals() {
     return (
       <>
         <div className="header-nav">
-          <button className="nav-button" style={{ visibility: "hidden" }}>{"<"}</button>
+          <button className="nav-button" style={{ visibility: "hidden" }}>
+            {"<"}
+          </button>
           <span>Daily Goals</span>
-          <button className="nav-button" style={{ visibility: "hidden" }}>{">"}</button>
+          <button className="nav-button" style={{ visibility: "hidden" }}>
+            {">"}
+          </button>
         </div>
         <div className="nutrients-list">
           {NUTRIENTS.map((n) => (
@@ -78,9 +83,13 @@ function AppContent() {
 
   return (
     <div className="app-container">
+      <Toaster />
       {settingGoals ? (
         <>
-          <button className="mode-toggle" onClick={() => setSettingGoals(false)}>
+          <button
+            className="mode-toggle"
+            onClick={() => setSettingGoals(false)}
+          >
             ← Back to Recording
           </button>
           <Goals />

@@ -20,9 +20,11 @@ import {
   beforeEach,
   afterEach,
   setSystemTime,
+  spyOn,
 } from "bun:test";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import toast from "react-hot-toast";
 import Portions from "../components/Portions";
 import { formatDate, renderWithClient } from "./utils";
 
@@ -814,5 +816,55 @@ describe("Portions component", () => {
       ".dot.filled:not(.excess)",
     );
     expect(filledDots).toHaveLength(4);
+  });
+
+  it("shows error toast and reverts optimistic update when mutation fails", async () => {
+    const user = userEvent.setup();
+
+    mockFetch.mockImplementation((url, options?) => {
+      if (
+        options?.method === "POST" &&
+        typeof url === "string" &&
+        url.includes("/consume")
+      ) {
+        return Promise.reject(new Error("Network error"));
+      }
+
+      if (typeof url === "string" && url.includes("/portions")) {
+        return Promise.resolve({
+          json: () => Promise.resolve(mockPortionsData),
+        } as Response);
+      }
+
+      return Promise.resolve({
+        json: () => Promise.resolve(mockGoalsData),
+      } as Response);
+    });
+
+    const errorToastSpy = spyOn(toast, "error").mockImplementation(
+      () => "test-id",
+    );
+
+    renderWithClient(<Portions />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/protein/i)).toBeInTheDocument();
+    });
+
+    const increaseButtons = screen.getAllByRole("button", { name: "+" });
+    await user.click(increaseButtons[0]);
+
+    await waitFor(() => {
+      expect(errorToastSpy).toHaveBeenCalledWith(
+        "Error communicating with the backend. Please check your Internet connection.",
+      );
+    });
+
+    // Check that there are no in-progress dots
+    const proteinSection = screen
+      .getByText(/protein/i)
+      .closest(".nutrient-row");
+    const inProgressDots = proteinSection?.querySelectorAll(".dot.in-progress");
+    expect(inProgressDots).toHaveLength(0);
   });
 });
