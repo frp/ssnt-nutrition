@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import {
+  type UseMutationResult,
   useMutation,
-  UseMutationResult,
   useQueryClient,
 } from "@tanstack/react-query";
 import { useState } from "react";

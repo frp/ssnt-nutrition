@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import {
-  describe,
-  it,
-  expect,
-  mock,
-  beforeEach,
   afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
   setSystemTime,
 } from "bun:test";
 import { screen, waitFor } from "@testing-library/react";

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import {
-  describe,
-  it,
-  expect,
-  mock,
-  beforeEach,
   afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
   setSystemTime,
   spyOn,
 } from "bun:test";

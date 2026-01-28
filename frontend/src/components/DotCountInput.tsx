@@ -47,6 +47,7 @@ export function DotCountInput({
           {new Array(filledDots).fill(filledDots).map((_, i) => (
             <span
               className={`dot filled ${name} ${goal && i >= goal ? "excess" : ""}`}
+              // biome-ignore lint/suspicious/noArrayIndexKey: nothing wrong with index here, and there's no more "natural" id
               key={i}
             ></span>
           ))}
@@ -56,7 +57,7 @@ export function DotCountInput({
                 .map((_, i) => (
                   <span
                     className={`dot in-progress ${name} ${goal && filledDots + i >= goal ? "excess" : ""}`}
-                    key={i}
+                    key={i + filledDots}
                   ></span>
                 ))
             : []}
@@ -64,18 +65,22 @@ export function DotCountInput({
             ? new Array(goal - filledDots - inProgressDots)
                 .fill(goal - filledDots - inProgressDots)
                 .map((_, i) => (
-                  <span className={`dot ${name}`} key={count + i}></span>
+                  <span
+                    className={`dot ${name}`}
+                    key={i + filledDots + inProgressDots}
+                  ></span>
                 ))
             : []}
         </div>
         <button
+          type="button"
           className="action-btn"
           onClick={onDecrease}
-          disabled={count + numInProgress == 0}
+          disabled={count + numInProgress === 0}
         >
           −
         </button>
-        <button className="action-btn" onClick={onIncrease}>
+        <button type="button" className="action-btn" onClick={onIncrease}>
           +
         </button>
       </div>

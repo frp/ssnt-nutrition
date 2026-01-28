@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { BackendBaseUrl } from "@/BackendUrlContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
+import { BackendBaseUrl } from "@/BackendUrlContext";
 
 export function formatDate(dateStr: string) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
     new Date(`${dateStr}T12:00:00Z`),
   );
-};
+}
 
 export function createTestQueryClient() {
   return new QueryClient({
@@ -34,7 +34,7 @@ export function createTestQueryClient() {
       },
     },
   });
-};
+}
 
 export function renderWithClient(ui: React.ReactElement) {
   const queryClient = createTestQueryClient();

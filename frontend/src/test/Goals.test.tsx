@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Goals from "@/components/Goals";
-import userEvent from "@testing-library/user-event";
-import { beforeEach } from "bun:test";
-import { it } from "bun:test";
-import { afterEach } from "bun:test";
-import { mock } from "bun:test";
-import { describe } from "bun:test";
-import { renderWithClient } from "./utils";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { screen, waitFor } from "@testing-library/react";
-import { expect } from "bun:test";
+import userEvent from "@testing-library/user-event";
+import Goals from "@/components/Goals";
+import { renderWithClient } from "./utils";
 
 describe("Goals component", () => {
   const mockGoalsData = {
@@ -138,16 +133,18 @@ describe("Goals component", () => {
       .getByText(/protein/i)
       .closest(".nutrient-row");
 
-    expect(proteinSection?.querySelectorAll(".dot.in-progress")).toHaveLength(1);
+    expect(proteinSection?.querySelectorAll(".dot.in-progress")).toHaveLength(
+      1,
+    );
 
     // Resolve the mutation to finish the test cleanly
     resolveMutation!({ ok: true } as Response);
 
     // After resolution, in-progress dot should disappear
     await waitFor(() => {
-      expect(
-        proteinSection?.querySelectorAll(".dot.in-progress"),
-      ).toHaveLength(0);
+      expect(proteinSection?.querySelectorAll(".dot.in-progress")).toHaveLength(
+        0,
+      );
     });
   });
 });

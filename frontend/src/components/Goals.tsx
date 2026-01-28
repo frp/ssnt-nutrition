@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { NUTRIENTS, useNutrientCounterMutation } from "@/common";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import { DotCountInput } from "./DotCountInput";
 import { BackendBaseUrl } from "@/BackendUrlContext";
+import { NUTRIENTS, useNutrientCounterMutation } from "@/common";
+import { DotCountInput } from "./DotCountInput";
 
 export default function Goals() {
-  const queryClient = useQueryClient();
   const baseUrl = useContext(BackendBaseUrl);
 
   const query = useQuery({
@@ -46,11 +45,19 @@ export default function Goals() {
     return (
       <>
         <div className="header-nav">
-          <button className="nav-button" style={{ visibility: "hidden" }}>
+          <button
+            type="button"
+            className="nav-button"
+            style={{ visibility: "hidden" }}
+          >
             {"<"}
           </button>
           <span>Daily Goals</span>
-          <button className="nav-button" style={{ visibility: "hidden" }}>
+          <button
+            type="button"
+            className="nav-button"
+            style={{ visibility: "hidden" }}
+          >
             {">"}
           </button>
         </div>
@@ -70,5 +77,5 @@ export default function Goals() {
     );
   }
 
-  return <></>;
+  return undefined;
 }

@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { useQuery } from "@tanstack/react-query";
+import { useContext, useState } from "react";
 import { BackendBaseUrl } from "@/BackendUrlContext";
 import {
   NUTRIENTS,
   PortionsOfNutrients,
   useNutrientCounterMutation,
 } from "@/common";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
-import toast from "react-hot-toast";
 
 function dayBefore(date: Date) {
   const d = new Date(date);
@@ -81,6 +80,7 @@ export default function Portions() {
           <button
             className="nav-button"
             onClick={() => setDate((d) => dayBefore(d))}
+            type="button"
           >
             {"<"}
           </button>
@@ -88,6 +88,7 @@ export default function Portions() {
           <button
             className="nav-button"
             onClick={() => setDate((d) => dayAfter(d))}
+            type="button"
           >
             {">"}
           </button>
@@ -113,5 +114,5 @@ export default function Portions() {
     );
   }
 
-  return <></>;
+  return undefined;
 }

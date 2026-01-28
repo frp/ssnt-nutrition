@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { TestingLibraryMatchers } from "@testing-library/jest-dom/matchers";
+import type { TestingLibraryMatchers } from "@testing-library/jest-dom/matchers";
 import "bun:test";
 
 // This is necessary to make TypeScript happy with jest-dom matchers.

@@ -15,261 +15,263 @@ limitations under the License.
 */
 
 #root {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 /* Card Container */
 .app-container {
-    background-color: oklch(1 0 0);
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  background-color: oklch(1 0 0);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* Header / Date Navigation */
 .header-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: oklch(0.3 0.05 250);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: oklch(0.3 0.05 250);
 }
 
 .header-nav span {
-    font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums;
 }
 
 .nav-button {
-    background: transparent;
-    border: 1px solid oklch(0.93 0 0);
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    color: oklch(0.5 0 0);
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
+  background: transparent;
+  border: 1px solid oklch(0.93 0 0);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  color: oklch(0.5 0 0);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 .nav-button:hover {
-    background: oklch(0.97 0 0);
-    border-color: oklch(0.87 0 0);
-    color: oklch(0.2 0 0);
+  background: oklch(0.97 0 0);
+  border-color: oklch(0.87 0 0);
+  color: oklch(0.2 0 0);
 }
 
 /* Mode Toggle Button */
 .mode-toggle {
-    align-self: flex-end;
-    margin-bottom: 0;
-    background-color: oklch(0.97 0 0);
-    color: oklch(0.4 0 0);
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: 1px solid oklch(0.88 0 0);
-    cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 0;
+  background-color: oklch(0.97 0 0);
+  color: oklch(0.4 0 0);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid oklch(0.88 0 0);
+  cursor: pointer;
 }
 .mode-toggle:hover {
-    background-color: oklch(0.93 0 0);
+  background-color: oklch(0.93 0 0);
 }
 
 /* Nutrients List */
 .nutrients-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 /* Nutrient Row */
 .nutrient-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    border-radius: 12px;
-    background-color: oklch(0.99 0 0);
-    border: 1px solid oklch(0.94 0 0);
-    transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background-color: oklch(0.99 0 0);
+  border: 1px solid oklch(0.94 0 0);
+  transition: background-color 0.2s;
 }
 
 .nutrient-row:hover {
-    background-color: oklch(0.97 0 0);
+  background-color: oklch(0.97 0 0);
 }
 
 .nutrient-label {
-    width: 100px;
-    font-weight: 600;
-    text-transform: capitalize;
-    color: oklch(0.35 0 0);
+  width: 100px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: oklch(0.35 0 0);
 }
 
 .controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .action-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: oklch(1 0 0);
-    border: 1px solid oklch(0.88 0 0);
-    color: oklch(0.45 0 0);
-    font-weight: bold;
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: oklch(1 0 0);
+  border: 1px solid oklch(0.88 0 0);
+  color: oklch(0.45 0 0);
+  font-weight: bold;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .action-btn:hover {
-    background-color: oklch(0.95 0 0);
-    color: oklch(0.2 0 0);
-    border-color: oklch(0.8 0 0);
+  background-color: oklch(0.95 0 0);
+  color: oklch(0.2 0 0);
+  border-color: oklch(0.8 0 0);
 }
 
 .dots-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    padding: 0 0.5rem;
-    min-height: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding: 0 0.5rem;
+  min-height: 24px;
 }
 
 /* Dots */
 .dot {
-    height: 14px;
-    width: 14px;
-    border-radius: 50%;
-    border: 2px solid var(--color);
-    background-color: transparent;
-    transition: all 0.2s ease-in-out;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--color);
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
 }
 
 .filled {
-    background-color: var(--color);
-    box-shadow: 0 0 4px var(--color);
+  background-color: var(--color);
+  box-shadow: 0 0 4px var(--color);
 }
 
 .in-progress {
-    background-color: var(--in-progress-color);
-    box-shadow: 0 0 4px var(--in-progress-color);
+  background-color: var(--in-progress-color);
+  box-shadow: 0 0 4px var(--in-progress-color);
 }
 
 .excess {
-    border-color: oklch(0.45 0.14 30);
-    background-color: oklch(0.45 0.14 30) !important;
-    box-shadow: none;
-    opacity: 0.8;
+  border-color: oklch(0.45 0.14 30);
+  /* biome-ignore lint/complexity/noImportantStyles: the simplest way to achieve the goal */
+  background-color: oklch(0.45 0.14 30) !important;
+  box-shadow: none;
+  opacity: 0.8;
 }
 
 .excess.in-progress {
-    border-color: oklch(0.55 0.14 30);
-    background-color: oklch(0.55 0.14 30) !important;
+  border-color: oklch(0.55 0.14 30);
+  /* biome-ignore lint/complexity/noImportantStyles: the simplest way to achieve the goal */
+  background-color: oklch(0.55 0.14 30) !important;
 }
 
 /* Loading / Error */
 .loading,
 .error {
-    text-align: center;
-    padding: 2rem;
-    color: oklch(0.45 0 0);
-    font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  color: oklch(0.45 0 0);
+  font-style: italic;
 }
 
 .error {
-    color: oklch(0.5 0.2 30);
+  color: oklch(0.5 0.2 30);
 }
 
 /* Nutrient Colors */
 .protein {
-    --color: oklch(0.7566 0.121 221.19);
-    --in-progress-color: oklch(0.8566 0.121 221.19);
+  --color: oklch(0.7566 0.121 221.19);
+  --in-progress-color: oklch(0.8566 0.121 221.19);
 }
 
 .vegetables {
-    --color: oklch(0.8041 0.1858 129.04);
-    --in-progress-color: oklch(0.9041 0.1858 129.04);
+  --color: oklch(0.8041 0.1858 129.04);
+  --in-progress-color: oklch(0.9041 0.1858 129.04);
 }
 
 .carbs {
-    --color: oklch(0.6962 0.1827 48.13);
-    --in-progress-color: oklch(0.7962 0.1827 48.13);
+  --color: oklch(0.6962 0.1827 48.13);
+  --in-progress-color: oklch(0.7962 0.1827 48.13);
 }
 
 .fats {
-    --color: oklch(0.8516 0.1732 89.43);
-    --in-progress-color: oklch(0.9516 0.1732 89.43);
+  --color: oklch(0.8516 0.1732 89.43);
+  --in-progress-color: oklch(0.9516 0.1732 89.43);
 }
 
 @media (max-width: 600px) {
-    #root {
-        padding: 1rem;
-    }
+  #root {
+    padding: 1rem;
+  }
 
-    .app-container {
-        padding: 1.25rem;
-    }
+  .app-container {
+    padding: 1.25rem;
+  }
 
-    .header-nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-    }
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
 
-    .header-nav span {
-        width: 100%;
-        text-align: center;
-        order: -1;
-        font-size: 1.5rem;
-    }
+  .header-nav span {
+    width: 100%;
+    text-align: center;
+    order: -1;
+    font-size: 1.5rem;
+  }
 
-    .nav-button {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        padding: 0.75rem;
-    }
+  .nav-button {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem;
+  }
 
-    .nutrient-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
+  .nutrient-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 
-    .nutrient-label {
-        width: 100%;
-        font-size: 1.1rem;
-        color: oklch(0.2 0 0);
-    }
+  .nutrient-label {
+    width: 100%;
+    font-size: 1.1rem;
+    color: oklch(0.2 0 0);
+  }
 
-    .controls {
-        width: 100%;
-        justify-content: space-between;
-        gap: 1rem;
-    }
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 1rem;
+  }
 
-    .dots-container {
-        flex: 1;
-        min-width: 0; /* Ensures proper wrapping behavior */
-    }
+  .dots-container {
+    flex: 1;
+    min-width: 0; /* Ensures proper wrapping behavior */
+  }
 
-    .action-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.25rem;
-        flex-shrink: 0;
-    }
+  .action-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
 }

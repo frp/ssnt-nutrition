@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import { useState } from "react";
-import Portions from "./Portions";
 import { Toaster } from "react-hot-toast";
 import Goals from "./Goals";
+import Portions from "./Portions";
 
 // Separate from App for testing, so that I could substitute query client
 // with one that does not do retries.
@@ -28,6 +28,7 @@ function AppContent() {
       {settingGoals ? (
         <>
           <button
+            type="button"
             className="mode-toggle"
             onClick={() => setSettingGoals(false)}
           >
@@ -37,7 +38,11 @@ function AppContent() {
         </>
       ) : (
         <>
-          <button className="mode-toggle" onClick={() => setSettingGoals(true)}>
+          <button
+            type="button"
+            className="mode-toggle"
+            onClick={() => setSettingGoals(true)}
+          >
             Edit Goals ⚙
           </button>
           <Portions />
