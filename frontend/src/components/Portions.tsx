@@ -13,7 +13,11 @@
 // limitations under the License.
 
 import { BackendBaseUrl } from "@/BackendUrlContext";
-import { NUTRIENTS, PortionsOfNutrients } from "@/common";
+import {
+  NUTRIENTS,
+  PortionsOfNutrients,
+  useNutrientCounterMutation,
+} from "@/common";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { DotCountInput } from "./DotCountInput";
@@ -33,7 +37,6 @@ function dayAfter(date: Date) {
 
 export default function Portions() {
   const [date, setDate] = useState(new Date());
-  const queryClient = useQueryClient();
   const baseUrl = useContext(BackendBaseUrl);
 
   const isoDate = date.toISOString().split("T")[0];
@@ -57,61 +60,11 @@ export default function Portions() {
         .then((data) => PortionsOfNutrients.parse(data)),
   });
 
-  // { 'protein': 1 } would mean that pending mutations involve 1 portion of protein
-  const [mutationsInProgress, setMutationsInProgress] = useState(
-    {} as PortionsOfNutrients,
+  const [mutationsInProgress, mutation] = useNutrientCounterMutation(
+    `${baseUrl}/days/${isoDate}/portions`,
+    "consume",
+    ["portions", isoDate],
   );
-
-  type MutationInputs = {
-    name: string;
-    command: string;
-  };
-
-  const mutation = useMutation({
-    mutationFn: ({ name, command }: MutationInputs) =>
-      fetch(`${baseUrl}/days/${isoDate}/portions/${name}/${command}`, {
-        method: "POST",
-      }),
-    onMutate: ({ name, command }) => {
-      setMutationsInProgress((m) => {
-        return {
-          ...m,
-          [name]: (m[name] ?? 0) + (command === "consume" ? 1 : -1),
-        };
-      });
-    },
-    onSuccess: (_, { name, command }) => {
-      queryClient.setQueryData(
-        ["portions", isoDate],
-        (data: PortionsOfNutrients) => {
-          return {
-            ...data,
-            [name]: (data[name] ?? 0) + (command === "consume" ? 1 : -1),
-          };
-        },
-      );
-      setMutationsInProgress((m) => {
-        // To remove from "in progress", add the opposite of the mutation direction.
-        return {
-          ...m,
-          [name]: (m[name] ?? 0) + (command === "consume" ? -1 : 1),
-        };
-      });
-    },
-    onError: (error, { name, command }) => {
-      toast.error(
-        `Error communicating with the backend. Please check your Internet connection.`,
-      );
-      setMutationsInProgress((m) => {
-        // To remove from "in progress", add the opposite of the mutation direction.
-        return {
-          ...m,
-          [name]: (m[name] ?? 0) + (command === "consume" ? -1 : 1),
-        };
-      });
-    },
-    // TODO: add idempotence
-  });
 
   if (portionsQuery.isPending || goalsQuery.isPending) {
     return <div className="loading">Loading...</div>;

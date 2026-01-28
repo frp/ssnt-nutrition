@@ -12,69 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { useContext, useState } from "react";
-import { DotCountInput } from "./DotCountInput";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BackendBaseUrl } from "@/BackendUrlContext";
+import { useState } from "react";
 import Portions from "./Portions";
-import { NUTRIENTS } from "@/common";
 import { Toaster } from "react-hot-toast";
-
-function Goals() {
-  const queryClient = useQueryClient();
-  const baseUrl = useContext(BackendBaseUrl);
-
-  const query = useQuery({
-    queryKey: ["goals"],
-    queryFn: () => fetch(`${baseUrl}/goals`).then((res) => res.json()),
-  });
-
-  const mutation = useMutation({
-    mutationFn: ({ name, command }: { name: string; command: string }) =>
-      fetch(`${baseUrl}/goals/portions/${name}/${command}`, {
-        method: "POST",
-      }),
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-
-  if (query.isPending) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (query.isError) {
-    return <div className="error">Error loading data</div>;
-  }
-
-  // The gidden buttons are in place to ensure consistency of height with the Portions view.
-  if (query.data) {
-    return (
-      <>
-        <div className="header-nav">
-          <button className="nav-button" style={{ visibility: "hidden" }}>
-            {"<"}
-          </button>
-          <span>Daily Goals</span>
-          <button className="nav-button" style={{ visibility: "hidden" }}>
-            {">"}
-          </button>
-        </div>
-        <div className="nutrients-list">
-          {NUTRIENTS.map((n) => (
-            <DotCountInput
-              name={n}
-              key={n}
-              count={query.data[n] ?? 0}
-              onIncrease={() => mutation.mutate({ name: n, command: "inc" })}
-              onDecrease={() => mutation.mutate({ name: n, command: "dec" })}
-            />
-          ))}
-        </div>
-      </>
-    );
-  }
-
-  return <></>;
-}
+import Goals from "./Goals";
 
 // Separate from App for testing, so that I could substitute query client
 // with one that does not do retries.
