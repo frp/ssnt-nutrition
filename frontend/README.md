@@ -1,4 +1,4 @@
-# bun-react-template
+# Simple Self-hosted Nutrient Tracker - Frontend
 
 To install dependencies:
 
@@ -12,10 +12,22 @@ To start a development server:
 bun dev
 ```
 
-To run for production:
+To test:
 
 ```bash
-bun start
+bun test
 ```
 
-This project was created using `bun init` in bun v1.2.12. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+To build:
+
+```bash
+bun run build
+```
+
+## Backend
+
+Backend's base URL is configured with environment variable `BUN_PUBLIC_BASE_URL`. By default, it is `localhost:3000` for development, and `/api` for production.
+
+## Deployment
+
+See instructions [here](../README.md).

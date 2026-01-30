@@ -244,7 +244,7 @@ async fn main() {
         .with_max_level(Level::TRACE)
         .init();
 
-    let bind_address = env::var("PORTIONS_BIND_ADDRESS").unwrap_or("0.0.0.0:3000".into());
+    let bind_address = env::var("SSNT_BIND_ADDRESS").unwrap_or("0.0.0.0:3000".into());
 
     let conn = Connection::open("nutrients.db").expect("Failed to open nutrients.db");
     setup_db(&conn).unwrap();

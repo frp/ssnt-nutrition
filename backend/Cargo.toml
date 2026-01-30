@@ -1,5 +1,5 @@
 [package]
-name = "portions_backend"
+name = "ssnt_backend"
 version = "0.1.0"
 edition = "2024"
 
