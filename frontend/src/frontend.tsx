@@ -24,6 +24,9 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { BackendBaseUrl } from "./BackendUrlContext";
+import { setupI18n } from "./i18n";
+
+setupI18n();
 
 const baseUrl = process.env.BUN_PUBLIC_BASE_URL ?? "/api";
 

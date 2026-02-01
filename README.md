@@ -13,6 +13,7 @@ I made this app primarily to meet my own nutritional needs, so the feature set i
 * Tracking portions of macronutrients.
 * Adjusting the goals.
 * Mobile-friendly UI.
+* Translations in multiple languages: 🇬🇧🇺🇦🇩🇪🇯🇵.
 
 The following commonly expected features are missing:
 

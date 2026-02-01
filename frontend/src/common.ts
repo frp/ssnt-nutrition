@@ -19,6 +19,7 @@ import {
 } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import * as z from "zod/mini";
 
 export const NUTRIENTS = ["protein", "carbs", "vegetables", "fats"];
@@ -52,6 +53,7 @@ export function useNutrientCounterMutation(
   PortionsOfNutrients,
   UseMutationResult<Response, Error, MutationInputs, void>,
 ] {
+  const { t } = useTranslation();
   // { 'protein': 1 } would mean that pending mutations involve 1 portion of protein
   const [mutationsInProgress, setMutationsInProgress] = useState(
     {} as PortionsOfNutrients,
@@ -90,9 +92,7 @@ export function useNutrientCounterMutation(
         });
       },
       onError: (_, { name, command }) => {
-        toast.error(
-          `Error communicating with the backend. Please check your Internet connection.`,
-        );
+        toast.error(t("common.backendError"));
         setMutationsInProgress((m) => {
           // To remove from "in progress", add the opposite of the mutation direction.
           return {

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { useTranslation } from "react-i18next";
+
 type NutrientProps = {
   name: string;
   count: number;
@@ -36,12 +38,14 @@ export function DotCountInput({
   onDecrease,
   goal,
 }: NutrientProps) {
+  const { t } = useTranslation();
+
   const numInProgress = inProgress ?? 0;
   const filledDots = numInProgress < 0 ? count + numInProgress : count;
   const inProgressDots = Math.abs(numInProgress);
   return (
     <div className="nutrient-row">
-      <div className="nutrient-label">{name}</div>
+      <div className="nutrient-label">{t(`DotCountInput.${name}`)}</div>
       <div className="controls">
         <div className="dots-container">
           {new Array(filledDots).fill(filledDots).map((_, i) => (

@@ -14,6 +14,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BackendBaseUrl } from "@/BackendUrlContext";
 import {
   NUTRIENTS,
@@ -35,13 +36,16 @@ function dayAfter(date: Date) {
 }
 
 export default function Portions() {
+  const { t, i18n } = useTranslation();
   const [date, setDate] = useState(new Date());
   const baseUrl = useContext(BackendBaseUrl);
 
   const isoDate = date.toISOString().split("T")[0];
-  const dateStr = new Intl.DateTimeFormat("en-GB", {
+  const dateStrRaw = new Intl.DateTimeFormat(i18n.language, {
     dateStyle: "full",
   }).format(date);
+  // Capitalization for Ukrainian, as it's capitalized already in other languages.
+  const dateStr = dateStrRaw.charAt(0).toUpperCase() + dateStrRaw.slice(1);
 
   const portionsQuery = useQuery({
     queryKey: ["portions", isoDate],
@@ -66,11 +70,11 @@ export default function Portions() {
   );
 
   if (portionsQuery.isPending || goalsQuery.isPending) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">{t("common.loading")}</div>;
   }
 
   if (portionsQuery.isError || goalsQuery.isError) {
-    return <div className="error">Error loading data</div>;
+    return <div className="error">{t("common.error")}</div>;
   }
 
   if (portionsQuery.data) {

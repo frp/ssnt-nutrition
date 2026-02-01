@@ -63,9 +63,28 @@ limitations under the License.
   color: oklch(0.2 0 0);
 }
 
+/* Header Row */
+.header-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Language Select */
+.language-select {
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid oklch(0.88 0 0);
+  background-color: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  color: oklch(0.4 0 0);
+}
+
 /* Mode Toggle Button */
 .mode-toggle {
-  align-self: flex-end;
   margin-bottom: 0;
   background-color: oklch(0.97 0 0);
   color: oklch(0.4 0 0);

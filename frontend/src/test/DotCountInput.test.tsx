@@ -29,7 +29,7 @@ describe("DotCountInput", () => {
         />,
       );
 
-      expect(screen.getByText(/protein/)).toBeInTheDocument();
+      expect(screen.getByText(/Protein/)).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "+" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "−" })).toBeInTheDocument();
     });

@@ -24,6 +24,7 @@ import {
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AppContent from "../components/AppContent";
+import { setupI18n } from "../i18n";
 import { formatDate, renderWithClient } from "./utils";
 
 describe("AppContent", () => {
@@ -116,5 +117,69 @@ describe("AppContent", () => {
       ".dot.filled:not(.excess)",
     );
     expect(filledDots).toHaveLength(3);
+  });
+
+  it("changes language when language is selected", async () => {
+    const user = userEvent.setup();
+    renderWithClient(<AppContent />);
+
+    // Initially in English
+    expect(
+      screen.getByRole("button", { name: "Edit Goals ⚙" }),
+    ).toBeInTheDocument();
+
+    const languageSelect = screen.getByRole("combobox", { name: "Language" });
+    expect(languageSelect).toHaveValue("en-GB");
+
+    // Switch to German
+    await user.selectOptions(languageSelect, "de");
+
+    // Check if text changed to German
+    expect(
+      screen.getByRole("button", { name: "Ziele bearbeiten ⚙" }),
+    ).toBeInTheDocument();
+    expect(languageSelect).toHaveValue("de");
+
+    // Switch back to English
+    await user.selectOptions(languageSelect, "en-GB");
+
+    // Check if text changed back to English
+    expect(
+      screen.getByRole("button", { name: "Edit Goals ⚙" }),
+    ).toBeInTheDocument();
+  });
+
+  it("persists language selection", async () => {
+    const user = userEvent.setup();
+    renderWithClient(<AppContent />);
+    await waitFor(() =>
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument(),
+    );
+
+    const languageSelect = screen.getByRole("combobox", { name: "Language" });
+    await user.selectOptions(languageSelect, "de");
+
+    expect(localStorage.getItem("language")).toBe("de");
+  });
+
+  it("initializes with persisted language on reload", async () => {
+    // Simulate saved language
+    localStorage.setItem("language", "de");
+
+    // Simulate reload by re-initializing i18n
+    await setupI18n();
+
+    renderWithClient(<AppContent />);
+    await waitFor(() =>
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument(),
+    );
+
+    // Should be in German
+    expect(
+      screen.getByRole("button", { name: "Ziele bearbeiten ⚙" }),
+    ).toBeInTheDocument();
+
+    const languageSelect = screen.getByRole("combobox", { name: "Language" });
+    expect(languageSelect).toHaveValue("de");
   });
 });

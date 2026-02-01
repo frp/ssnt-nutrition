@@ -14,11 +14,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { BackendBaseUrl } from "@/BackendUrlContext";
 import { NUTRIENTS, useNutrientCounterMutation } from "@/common";
 import { DotCountInput } from "./DotCountInput";
 
 export default function Goals() {
+  const { t } = useTranslation();
   const baseUrl = useContext(BackendBaseUrl);
 
   const query = useQuery({
@@ -33,11 +35,11 @@ export default function Goals() {
   );
 
   if (query.isPending) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">{t("common.loading")}</div>;
   }
 
   if (query.isError) {
-    return <div className="error">Error loading data</div>;
+    return <div className="error">{t("common.error")}</div>;
   }
 
   // The gidden buttons are in place to ensure consistency of height with the Portions view.
@@ -52,7 +54,7 @@ export default function Goals() {
           >
             {"<"}
           </button>
-          <span>Daily Goals</span>
+          <span>{t("Goals.title")}</span>
           <button
             type="button"
             className="nav-button"

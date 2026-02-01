@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { afterEach, expect } from "bun:test";
+import { afterEach, beforeEach, expect } from "bun:test";
 import * as matchers from "@testing-library/jest-dom/matchers";
 import { cleanup } from "@testing-library/react";
+import i18n from "i18next";
+import { setupI18n } from "../i18n";
 
 expect.extend(matchers);
+
+beforeEach(() => {
+  setupI18n();
+  i18n.changeLanguage("en-GB");
+});
 
 // Optional: cleans up `render` after each test
 afterEach(() => {
