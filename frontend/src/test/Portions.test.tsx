@@ -22,7 +22,7 @@ import {
   setSystemTime,
   spyOn,
 } from "bun:test";
-import { screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import toast from "react-hot-toast";
 import Portions from "../components/Portions";
@@ -866,5 +866,55 @@ describe("Portions component", () => {
       .closest(".nutrient-row");
     const inProgressDots = proteinSection?.querySelectorAll(".dot.in-progress");
     expect(inProgressDots).toHaveLength(0);
+  });
+
+  it("opens date picker when calendar button is clicked", async () => {
+    const user = userEvent.setup();
+    renderWithClient(<Portions />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/select date/i)).toBeInTheDocument();
+    });
+
+    const calendarButton = screen.getByLabelText(/select date/i);
+    const dateInput = screen.getByDisplayValue(
+      "2024-01-15",
+    ) as HTMLInputElement;
+
+    const showPickerMock = mock(() => {});
+    dateInput.showPicker = showPickerMock;
+
+    await user.click(calendarButton);
+
+    expect(showPickerMock).toHaveBeenCalled();
+  });
+
+  it("updates date and fetches new data when date is selected in the picker", async () => {
+    renderWithClient(<Portions />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("2024-01-15")).toBeInTheDocument();
+    });
+
+    const dateInput = screen.getByDisplayValue("2024-01-15");
+
+    // Change the date using fireEvent since userEvent.type might be tricky with type="date"
+    fireEvent.change(dateInput, { target: { value: "2024-01-16" } });
+
+    await waitFor(() => {
+      expect(screen.getByText(formatDate("2024-01-16"))).toBeInTheDocument();
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        expect.stringContaining("/days/2024-01-16/portions"),
+      );
+    });
+
+    // Verify data updated
+    const proteinSection = screen
+      .getByText(/protein/i)
+      .closest(".nutrient-row");
+    const filledDots = proteinSection?.querySelectorAll(
+      ".dot.filled:not(.excess)",
+    );
+    expect(filledDots).toHaveLength(2); // 2024-01-16 has 2 protein
   });
 });

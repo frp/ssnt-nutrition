@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
+import { CalendarDays } from "lucide-react";
+import { useContext, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BackendBaseUrl } from "@/BackendUrlContext";
 import {
@@ -39,6 +40,7 @@ export default function Portions() {
   const { t, i18n } = useTranslation();
   const [date, setDate] = useState(new Date());
   const baseUrl = useContext(BackendBaseUrl);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const isoDate = date.toISOString().split("T")[0];
   const dateStrRaw = new Intl.DateTimeFormat(i18n.language, {
@@ -88,7 +90,35 @@ export default function Portions() {
           >
             {"<"}
           </button>
-          <span>{dateStr}</span>
+          <div className="date-display">
+            <span>{dateStr}</span>
+            <div className="date-input-wrapper">
+              <button
+                type="button"
+                className="calendar-button"
+                onClick={() => dateInputRef.current?.showPicker()}
+                aria-label={t("common.selectDate")}
+              >
+                <CalendarDays
+                  size={25}
+                  className="calendar-icon"
+                  aria-hidden="true"
+                />
+              </button>
+              <input
+                ref={dateInputRef}
+                type="date"
+                value={isoDate}
+                onChange={(e) => {
+                  const newDate = new Date(e.target.value);
+                  if (!Number.isNaN(newDate.getTime())) {
+                    setDate(newDate);
+                  }
+                }}
+                className="date-input-hidden"
+              />
+            </div>
+          </div>
           <button
             className="nav-button"
             onClick={() => setDate((d) => dayAfter(d))}

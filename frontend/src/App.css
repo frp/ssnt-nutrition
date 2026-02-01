@@ -47,6 +47,46 @@ limitations under the License.
   font-variant-numeric: tabular-nums;
 }
 
+.date-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: oklch(0.5 0 0);
+  transition: all 0.2s;
+}
+
+.calendar-button:hover {
+  transform: scale(1.1);
+  color: oklch(0.2 0 0);
+}
+
+.calendar-icon {
+  flex-shrink: 0;
+}
+
+.date-input-hidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .nav-button {
   background: transparent;
   border: 1px solid oklch(0.93 0 0);
@@ -250,10 +290,13 @@ limitations under the License.
     gap: 1rem;
   }
 
-  .header-nav span {
+  .date-display {
     width: 100%;
-    text-align: center;
+    justify-content: center;
     order: -1;
+  }
+
+  .date-display span {
     font-size: 1.5rem;
   }
 

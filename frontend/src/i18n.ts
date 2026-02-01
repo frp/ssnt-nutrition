@@ -29,6 +29,7 @@ export const TRANSLATIONS = {
       "common.error": "Fehler beim Laden der Daten",
       "common.backendError":
         "Fehler bei der Kommunikation mit dem Backend. Bitte überprüfen Sie Ihre Internetverbindung.",
+      "common.selectDate": "Datum auswählen",
       "Goals.title": "Tagesziele",
     },
   },
@@ -44,6 +45,7 @@ export const TRANSLATIONS = {
       "common.error": "Error loading data",
       "common.backendError":
         "Error communicating with the backend. Please check your Internet connection.",
+      "common.selectDate": "Select date",
       "Goals.title": "Daily Goals",
     },
   },
@@ -59,6 +61,7 @@ export const TRANSLATIONS = {
       "common.error": "データの読み込み中にエラーが発生しました",
       "common.backendError":
         "バックエンドとの通信中にエラーが発生しました。インターネット接続を確認してください。",
+      "common.selectDate": "日付を選択",
       "Goals.title": "毎日の目標",
     },
   },
@@ -74,6 +77,7 @@ export const TRANSLATIONS = {
       "common.error": "Помилка завантаження даних",
       "common.backendError":
         "Помилка зв'язку з сервером. Будь ласка, перевірте підключення до Інтернету.",
+      "common.selectDate": "Вибрати дату",
       "Goals.title": "Щоденні цілі",
     },
   },
